@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- * lone wolf, quiet teeth | Matt Livingston -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dopamine War — Reclaim Your Brain</title>
+  <meta name="description" content="Your attention is under attack. Audit your dopamine triggers, track your battles, and take back control of your reward system.">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dopaminewar.com">
+  <meta property="og:title" content="Dopamine War — Reclaim Your Brain">
+  <meta property="og:description" content="Your attention is under attack. Audit your dopamine triggers, track your battles, and take back control.">
+  <meta property="og:image" content="https://dopaminewar.com/card.png">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dopamine War — Reclaim Your Brain">
+  <meta name="twitter:description" content="Your attention is under attack. Audit your dopamine triggers, track your battles, and take back control.">
+  <meta name="twitter:image" content="https://dopaminewar.com/card.png">
+  
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  
+  <style>
+    /* Landing-specific styles */
+    .landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: var(--space-2xl) 0;
+    }
+    
+    .hero__content {
+      max-width: 600px;
+    }
+    
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-critical);
+      background: var(--color-critical-glow);
+      border: 1px solid var(--color-critical);
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .hero__badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--color-critical);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    
+    .hero__title {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .hero__title span {
+      color: var(--color-critical);
+    }
+    
+    .hero__description {
+      font-size: 1.125rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-xl);
+      line-height: 1.7;
+    }
+    
+    .hero__cta {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+    
+    .hero__stats {
+      display: flex;
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+      padding-top: var(--space-xl);
+      border-top: 1px solid var(--color-border);
+    }
+    
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .stat__value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    
+    .stat__label {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+    }
+    
+    /* Audit styles */
+    .audit {
+      display: none;
+      min-height: 100vh;
+      padding: var(--space-xl) 0;
+    }
+    
+    .audit.active {
+      display: block;
+    }
+    
+    .audit__header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .audit__progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .audit__progress-bar {
+      width: 200px;
+      height: 4px;
+      background: var(--color-border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .audit__progress-fill {
+      height: 100%;
+      background: var(--color-accent);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    
+    .audit__progress-text {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+    }
+    
+    .audit__title {
+      font-size: 1.25rem;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .audit__subtitle {
+      color: var(--color-text-muted);
+      font-size: 0.9375rem;
+    }
+    
+    .question {
+      max-width: 500px;
+      margin: 0 auto;
+      animation: slideUp 0.3s ease;
+    }
+    
+    .question__text {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: var(--space-lg);
+      text-align: center;
+    }
+    
+    .question__front {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+    }
+    
+    .question__options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    .question__option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .question__option:hover {
+      border-color: var(--color-border-hover);
+      background: var(--color-bg-card);
+    }
+    
+    .question__option.selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
+    
+    .question__option-indicator {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--color-border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+    
+    .question__option.selected .question__option-indicator {
+      border-color: var(--color-accent);
+      background: var(--color-accent);
+      box-shadow: inset 0 0 0 3px var(--color-bg-card);
+    }
+    
+    .question__option-text {
+      font-size: 0.9375rem;
+    }
+    
+    .audit__nav {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-top: var(--space-xl);
+    }
+    
+    /* Results teaser */
+    .results-teaser {
+      display: none;
+      text-align: center;
+      padding: var(--space-2xl) 0;
+      animation: slideUp 0.4s ease;
+    }
+    
+    .results-teaser.active {
+      display: block;
+    }
+    
+    .results-teaser__score {
+      font-family: var(--font-mono);
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-md);
+    }
+    
+    .results-teaser__score.critical { color: var(--color-critical); }
+    .results-teaser__score.high { color: var(--color-high); }
+    .results-teaser__score.moderate { color: var(--color-moderate); }
+    .results-teaser__score.low { color: var(--color-low); }
+    .results-teaser__score.secure { color: var(--color-secure); }
+    
+    .results-teaser__label {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .results-teaser__message {
+      font-size: 1.125rem;
+      color: var(--color-text-secondary);
+      max-width: 400px;
+      margin: 0 auto var(--space-xl);
+    }
+    
+    /* Return visitor */
+    .return-banner {
+      display: none;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    
+    .return-banner.active {
+      display: block;
+    }
+    
+    .return-banner__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+    }
+    
+    .return-banner__content h3 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .return-banner__content p {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+    }
+    
+    .return-banner__actions {
+      display: flex;
+      gap: var(--space-sm);
+    }
+    
+    @media (max-width: 640px) {
+      .hero__stats {
+        flex-direction: column;
+        gap: var(--space-lg);
+      }
+      
+      .hero__cta {
+        flex-direction: column;
+      }
+      
+      .hero__cta .btn {
+        width: 100%;
+      }
+      
+      .return-banner__inner {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .return-banner__actions {
+        width: 100%;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Landing Page -->
+  <div class="landing" id="landing">
+    <header class="header">
+      <div class="container header__inner">
+        <a href="/" class="header__logo">DOPAMINE WAR</a>
+        <nav class="header__nav">
+          <a href="/war-room/" class="header__link">War Room</a>
+          <a href="/profiles/" class="header__link">Enemy Intel</a>
+        </nav>
+      </div>
+    </header>
+    
+    <section class="hero">
+      <div class="container">
+        <!-- Return visitor banner -->
+        <div class="return-banner" id="returnBanner">
+          <div class="return-banner__inner">
+            <div class="return-banner__content">
+              <h3>Welcome back, soldier.</h3>
+              <p>Your War Room is still active. Resume operations or retake the audit.</p>
+            </div>
+            <div class="return-banner__actions">
+              <a href="/war-room/" class="btn btn--primary">Enter War Room</a>
+              <button class="btn btn--secondary" id="retakeAudit">Retake Audit</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="hero__content">
+          <div class="hero__badge">
+            <span>Threat Assessment Available</span>
+          </div>
+          
+          <h1 class="hero__title">Your brain is <span>under attack.</span></h1>
+          
+          <p class="hero__description">
+            Every app, every feed, every notification is engineered to hijack your reward system. 
+            You're not weak. You're outgunned. It's time to fight back.
+          </p>
+          
+          <div class="hero__cta">
+            <button class="btn btn--primary btn--large" id="startAudit">
+              Begin Threat Assessment
+            </button>
+            <a href="/profiles/" class="btn btn--secondary btn--large">
+              Know Your Enemy
+            </a>
+          </div>
+          
+          <div class="hero__stats">
+            <div class="stat">
+              <span class="stat__value">8</span>
+              <span class="stat__label">Active Fronts Tracked</span>
+            </div>
+            <div class="stat">
+              <span class="stat__value">100%</span>
+              <span class="stat__label">Client-Side (No Data Sent)</span>
+            </div>
+            <div class="stat">
+              <span class="stat__value">0</span>
+              <span class="stat__label">Accounts Required</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <footer class="footer">
+      <div class="container">
+        <p class="footer__text">No tracking. No accounts. Your data stays on your device.</p>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- Audit Flow -->
+  <div class="audit" id="audit">
+    <div class="container container--narrow">
+      <div class="audit__header">
+        <div class="audit__progress">
+          <div class="audit__progress-bar">
+            <div class="audit__progress-fill" id="progressFill"></div>
+          </div>
+          <span class="audit__progress-text" id="progressText">1 / 8</span>
+        </div>
+        <h1 class="audit__title">Threat Assessment</h1>
+        <p class="audit__subtitle">Answer honestly. This is recon, not judgment.</p>
+      </div>
+      
+      <div class="question" id="questionContainer">
+        <!-- Questions injected here -->
+      </div>
+      
+      <div class="audit__nav" id="auditNav">
+        <button class="btn btn--secondary" id="prevBtn" disabled>Back</button>
+        <button class="btn btn--primary" id="nextBtn" disabled>Next</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Results Teaser -->
+  <div class="results-teaser" id="results">
+    <div class="container container--narrow">
+      <div class="results-teaser__score" id="scoreDisplay">--</div>
+      <div class="threat-badge" id="threatBadge">
+        <span id="threatLabel">CALCULATING</span>
+      </div>
+      <p class="results-teaser__label mt-lg" id="threatMessage"></p>
+      <p class="results-teaser__message">
+        Your War Room is ready. See your full threat breakdown, battle plans, and start tracking your daily operations.
+      </p>
+      <a href="/war-room/" class="btn btn--primary btn--large">Enter War Room</a>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+  <script>
+    // ==========================================
+    // Audit Questions — One per front, comprehensive
+    // ==========================================
+    const QUESTIONS = [
+      {
+        front: 'social',
+        text: 'How would you describe your social media use?',
+        options: [
+          { label: 'I rarely use it or don\'t have accounts', value: 0 },
+          { label: 'I check it a few times a day with limits', value: 25 },
+          { label: 'I check it often, sometimes losing track of time', value: 50 },
+          { label: 'I check constantly and feel anxious without it', value: 75 },
+          { label: 'It\'s the first and last thing I do daily, I can\'t stop', value: 100 },
+        ]
+      },
+      {
+        front: 'sugar',
+        text: 'How would you describe your relationship with sugar and junk food?',
+        options: [
+          { label: 'I rarely eat it, no cravings', value: 0 },
+          { label: 'Occasional treat, I can take it or leave it', value: 25 },
+          { label: 'I eat it daily but feel in control', value: 50 },
+          { label: 'I crave it often and use it to cope with stress', value: 75 },
+          { label: 'I\'m constantly craving it and can\'t resist', value: 100 },
+        ]
+      },
+      {
+        front: 'news',
+        text: 'How would you describe your news and current events consumption?',
+        options: [
+          { label: 'I stay informed briefly, it doesn\'t affect my mood', value: 0 },
+          { label: 'I check daily but set limits', value: 25 },
+          { label: 'I spend 1-2 hours daily, sometimes feel anxious after', value: 50 },
+          { label: 'I doomscroll often and it affects my mood', value: 75 },
+          { label: 'It\'s constant, I feel anxious and can\'t look away', value: 100 },
+        ]
+      },
+      {
+        front: 'gaming',
+        text: 'How would you describe your gaming habits?',
+        options: [
+          { label: 'I don\'t game or rarely do', value: 0 },
+          { label: 'I play occasionally, easy to stop', value: 25 },
+          { label: 'I play regularly, sometimes longer than planned', value: 50 },
+          { label: 'I play daily, often skip other activities for it', value: 75 },
+          { label: 'Gaming dominates my free time, hard to stop', value: 100 },
+        ]
+      },
+      {
+        front: 'shopping',
+        text: 'How would you describe your online shopping behavior?',
+        options: [
+          { label: 'I only buy what I need, rarely browse', value: 0 },
+          { label: 'I occasionally impulse buy but it\'s minor', value: 25 },
+          { label: 'I browse often and buy things I don\'t need weekly', value: 50 },
+          { label: 'I get a rush from buying, packages arrive constantly', value: 75 },
+          { label: 'Shopping is a main source of pleasure, I can\'t stop', value: 100 },
+        ]
+      },
+      {
+        front: 'caffeine',
+        text: 'How would you describe your caffeine consumption?',
+        options: [
+          { label: 'None or occasional, no dependency', value: 0 },
+          { label: '1-2 cups daily, I could quit if needed', value: 25 },
+          { label: '3-4 cups daily, I get headaches without it', value: 50 },
+          { label: '5+ cups daily, I\'m useless without it', value: 75 },
+          { label: 'I\'m constantly caffeinated and need it to function', value: 100 },
+        ]
+      },
+      {
+        front: 'porn',
+        text: 'How would you describe your pornography use?',
+        options: [
+          { label: 'I don\'t use it or very rarely', value: 0 },
+          { label: 'Occasional use, doesn\'t affect my life', value: 25 },
+          { label: 'Regular use, sometimes more than I\'d like', value: 50 },
+          { label: 'Frequent use, have noticed I need more intensity', value: 75 },
+          { label: 'Daily use, it\'s affecting my relationships or habits', value: 100 },
+        ]
+      },
+      {
+        front: 'gambling',
+        text: 'Do you gamble, day-trade, or make speculative bets?',
+        options: [
+          { label: 'No, or very rarely with small amounts', value: 0 },
+          { label: 'Occasionally, always within strict limits', value: 25 },
+          { label: 'Regularly, sometimes more than I planned', value: 50 },
+          { label: 'Often, I\'ve chased losses or hidden it from others', value: 75 },
+          { label: 'Frequently, it\'s causing financial or relationship problems', value: 100 },
+        ]
+      },
+    ];
+    
+    // ==========================================
+    // State
+    // ==========================================
+    let currentQuestion = 0;
+    let answers = {};
+    
+    // ==========================================
+    // DOM Elements
+    // ==========================================
+    const landing = document.getElementById('landing');
+    const audit = document.getElementById('audit');
+    const results = document.getElementById('results');
+    const returnBanner = document.getElementById('returnBanner');
+    const startBtn = document.getElementById('startAudit');
+    const retakeBtn = document.getElementById('retakeAudit');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const questionContainer = document.getElementById('questionContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    // ==========================================
+    // Initialize
+    // ==========================================
+    function init() {
+      // Check if returning user
+      if (DW.audit.isComplete()) {
+        returnBanner.classList.add('active');
+      }
+      
+      // Event listeners
+      startBtn.addEventListener('click', startAudit);
+      retakeBtn.addEventListener('click', () => {
+        DW.audit.reset();
+        startAudit();
+      });
+      prevBtn.addEventListener('click', prevQuestion);
+      nextBtn.addEventListener('click', nextQuestion);
+    }
+    
+    // ==========================================
+    // Audit Flow
+    // ==========================================
+    function startAudit() {
+      landing.style.display = 'none';
+      audit.classList.add('active');
+      currentQuestion = 0;
+      answers = {};
+      renderQuestion();
+    }
+    
+    function renderQuestion() {
+      const q = QUESTIONS[currentQuestion];
+      const front = DW.FRONTS[q.front];
+      
+      // Update progress
+      const progress = ((currentQuestion + 1) / QUESTIONS.length) * 100;
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `${currentQuestion + 1} / ${QUESTIONS.length}`;
+      
+      // Build question HTML
+      const selectedValue = answers[currentQuestion];
+      
+      let optionsHTML = q.options.map((opt, i) => `
+        <div class="question__option ${selectedValue === opt.value ? 'selected' : ''}" data-value="${opt.value}">
+          <div class="question__option-indicator"></div>
+          <span class="question__option-text">${opt.label}</span>
+        </div>
+      `).join('');
+      
+      questionContainer.innerHTML = `
+        <div class="question__front">
+          <span>${front.icon}</span>
+          <span>${front.name}</span>
+        </div>
+        <h2 class="question__text">${q.text}</h2>
+        <div class="question__options">
+          ${optionsHTML}
+        </div>
+      `;
+      
+      // Add click handlers to options
+      questionContainer.querySelectorAll('.question__option').forEach(opt => {
+        opt.addEventListener('click', () => selectOption(opt));
+      });
+      
+      // Update nav buttons
+      prevBtn.disabled = currentQuestion === 0;
+      nextBtn.textContent = currentQuestion === QUESTIONS.length - 1 ? 'Complete' : 'Next';
+      nextBtn.disabled = selectedValue === undefined;
+    }
+    
+    function selectOption(optionEl) {
+      // Remove previous selection
+      questionContainer.querySelectorAll('.question__option').forEach(o => {
+        o.classList.remove('selected');
+      });
+      
+      // Add new selection
+      optionEl.classList.add('selected');
+      answers[currentQuestion] = parseInt(optionEl.dataset.value);
+      nextBtn.disabled = false;
+    }
+    
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        renderQuestion();
+      }
+    }
+    
+    function nextQuestion() {
+      if (answers[currentQuestion] === undefined) return;
+      
+      if (currentQuestion < QUESTIONS.length - 1) {
+        currentQuestion++;
+        renderQuestion();
+      } else {
+        completeAudit();
+      }
+    }
+    
+    // ==========================================
+    // Complete Audit
+    // ==========================================
+    function completeAudit() {
+      // With 1 question per front, score = answer directly
+      const finalScores = {};
+      
+      QUESTIONS.forEach((q, i) => {
+        finalScores[q.front] = answers[i] || 0;
+      });
+      
+      // Save to storage
+      DW.audit.saveScores(finalScores);
+      
+      // Show results
+      showResults(finalScores);
+    }
+    
+    function showResults(scores) {
+      audit.classList.remove('active');
+      results.classList.add('active');
+      
+      const overallScore = DW.audit.getOverallScore();
+      const threat = DW.audit.getThreatLevel(overallScore);
+      
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const threatBadge = document.getElementById('threatBadge');
+      const threatLabel = document.getElementById('threatLabel');
+      const threatMessage = document.getElementById('threatMessage');
+      
+      scoreDisplay.textContent = overallScore;
+      scoreDisplay.className = `results-teaser__score ${threat.color}`;
+      
+      threatBadge.className = `threat-badge threat-badge--${threat.color}`;
+      threatLabel.textContent = `THREAT LEVEL: ${threat.label}`;
+      
+      const messages = {
+        critical: 'Your reward system is severely compromised. Immediate action required.',
+        high: 'Multiple fronts are actively undermining your focus and wellbeing.',
+        moderate: 'You\'re holding ground, but vulnerabilities exist.',
+        low: 'Mostly under control. Stay vigilant on weak points.',
+        secure: 'Your defenses are solid. Maintain current operations.',
+      };
+      
+      threatMessage.textContent = messages[threat.key];
+    }
+    
+    // ==========================================
+    // Init
+    // ==========================================
+    init();
+  </script>
+</body>
+</html>

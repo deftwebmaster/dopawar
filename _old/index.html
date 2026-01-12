@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dopamine War — A Tactical Manual for Reclaiming Your Attention</title>
+    <meta name="description" content="You're not weak. You're outgunned. Dopamine War is the tactical manual for fighting back against the systems designed to hijack your attention.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark: #111111;
+            --gray-dark: #1a1a1a;
+            --gray-mid: #2a2a2a;
+            --gray-light: #888888;
+            --white: #f0f0f0;
+            --red: #c41e1e;
+            --red-glow: #ff3333;
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Source Sans Pro', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 18px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Tactical grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 24px;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to top, var(--black), transparent);
+            pointer-events: none;
+        }
+
+        .cover-image {
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 48px;
+            box-shadow: 
+                0 0 60px rgba(196, 30, 30, 0.3),
+                0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .headline {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .headline .highlight {
+            color: var(--red);
+            text-shadow: 0 0 30px rgba(196, 30, 30, 0.5);
+        }
+
+        .subhead {
+            font-size: 1.25rem;
+            color: var(--gray-light);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .subhead em {
+            color: var(--white);
+            font-style: normal;
+        }
+
+        .cta-button {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--white);
+            background: var(--red);
+            padding: 18px 48px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: var(--red-glow);
+            box-shadow: 0 0 40px rgba(196, 30, 30, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-sub {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--gray-light);
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 24px;
+        }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--red);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-label::before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: var(--red);
+        }
+
+        h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+            margin-bottom: 32px;
+        }
+
+        p {
+            margin-bottom: 24px;
+            color: var(--gray-light);
+        }
+
+        p strong {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        /* Problem Section */
+        .problem {
+            background: linear-gradient(180deg, var(--black) 0%, var(--dark) 50%, var(--black) 100%);
+        }
+
+        /* Book Section */
+        .book-section {
+            background: var(--dark);
+            border-top: 1px solid var(--gray-mid);
+            border-bottom: 1px solid var(--gray-mid);
+        }
+
+        .book-list {
+            list-style: none;
+            margin: 32px 0;
+        }
+
+        .book-list li {
+            padding: 12px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--gray-light);
+            border-bottom: 1px solid var(--gray-mid);
+        }
+
+        .book-list li:last-child {
+            border-bottom: none;
+        }
+
+        .book-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+        }
+
+        .word-count {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-light);
+            padding: 8px 16px;
+            border: 1px solid var(--gray-mid);
+            margin-top: 16px;
+        }
+
+        /* Who Section */
+        .who-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+        }
+
+        @media (max-width: 700px) {
+            .who-section {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
+        .who-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-mid);
+        }
+
+        .who-box.for-you h3 {
+            color: var(--white);
+            border-color: var(--red);
+        }
+
+        .who-box.not-for h3 {
+            color: var(--gray-light);
+        }
+
+        .who-box ul {
+            list-style: none;
+        }
+
+        .who-box ul li {
+            padding: 8px 0;
+            color: var(--gray-light);
+            font-size: 1rem;
+        }
+
+        .who-box.for-you ul li::before {
+            content: '→ ';
+            color: var(--red);
+        }
+
+        .who-box.not-for ul li::before {
+            content: '✕ ';
+            color: var(--gray-mid);
+        }
+
+        /* Stance Section */
+        .stance {
+            text-align: center;
+            background: var(--dark);
+            border-top: 1px solid var(--gray-mid);
+            border-bottom: 1px solid var(--gray-mid);
+        }
+
+        .stance p {
+            font-size: 1.35rem;
+            color: var(--white);
+            max-width: 650px;
+            margin: 0 auto 24px;
+        }
+
+        .stance p.dim {
+            font-size: 1.1rem;
+            color: var(--gray-light);
+        }
+
+        /* Bonuses */
+        .bonuses {
+            background: linear-gradient(180deg, var(--black) 0%, var(--gray-dark) 100%);
+        }
+
+        .bonus-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 700px) {
+            .bonus-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .bonus-card {
+            background: var(--dark);
+            border: 1px solid var(--gray-mid);
+            padding: 32px;
+            position: relative;
+        }
+
+        .bonus-card::before {
+            content: 'INCLUDED';
+            position: absolute;
+            top: -10px;
+            left: 24px;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: var(--black);
+            background: var(--red);
+            padding: 4px 10px;
+        }
+
+        .bonus-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .bonus-card p {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            padding: 100px 24px;
+            background: var(--black);
+            position: relative;
+        }
+
+        .final-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--red));
+        }
+
+        .price {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .price-note {
+            font-size: 1rem;
+            color: var(--gray-light);
+            margin-bottom: 32px;
+        }
+
+        .closer {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--white);
+            margin-top: 60px;
+        }
+
+        .closer span {
+            color: var(--red);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            border-top: 1px solid var(--gray-mid);
+        }
+
+        footer p {
+            font-size: 0.9rem;
+            color: var(--gray-light);
+            margin-bottom: 8px;
+        }
+
+        footer a {
+            color: var(--gray-light);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: var(--red);
+        }
+
+        /* Animations on scroll */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <section class="hero">
+        <img src="cover.png" alt="Dopamine War book cover" class="cover-image">
+        <h1 class="headline">You're Not Weak.<br>You're <span class="highlight">Outgunned.</span></h1>
+        <p class="subhead">The apps on your phone weren't designed to help you. They were designed to capture you. <em>Dopamine War</em> is the tactical manual for fighting back.</p>
+        <a href="#buy" class="cta-button">Get the Book — $9</a>
+        <p class="cta-sub">Instant download. PDF + EPUB.</p>
+    </section>
+
+    <!-- Problem -->
+    <section class="problem">
+        <div class="container fade-in">
+            <div class="section-label">The Problem</div>
+            <h2>You've Tried the Tips. They Don't Stick.</h2>
+            <p>Screen time limits. Grayscale mode. "Digital detoxes" that last three days. None of it works—because none of it addresses the real problem.</p>
+            <p><strong>The real problem isn't your discipline.</strong> It's that you're facing a billion-dollar infrastructure engineered by the best behavioral scientists money can buy, and you're fighting it with willpower alone.</p>
+            <p>That's not a fair fight. It was never designed to be.</p>
+        </div>
+    </section>
+
+    <!-- The Book -->
+    <section class="book-section">
+        <div class="container fade-in">
+            <div class="section-label">The Book</div>
+            <h2>A Field Manual, Not a Self-Help Book</h2>
+            <p><strong>Dopamine War</strong> is not a detox book. Not a productivity system. Not a neuroscience lecture padded with studies to sound credible.</p>
+            <p>It's a short, honest field manual for reclaiming your attention—written for people who are tired of being told the problem is them.</p>
+            <ul class="book-list">
+                <li>The loop that drives compulsive behavior—and how to interrupt it</li>
+                <li>How the platforms actually work: variable rewards, friction removal, identity capture</li>
+                <li>Tactical responses that don't require heroic willpower</li>
+                <li>Environment design, trigger removal, rules that stick</li>
+                <li>A minimum viable setup that keeps what you need and cuts what's attacking you</li>
+            </ul>
+            <span class="word-count">~7,000 words · No filler · Every chapter earns its place</span>
+        </div>
+    </section>
+
+    <!-- Who This Is For -->
+    <section>
+        <div class="container fade-in">
+            <div class="section-label">Who This Is For</div>
+            <div class="who-section">
+                <div class="who-box for-you">
+                    <h3>This Is For You If:</h3>
+                    <ul>
+                        <li>You've felt your attention eroding and want to understand why</li>
+                        <li>You're tired of advice that blames your lack of discipline</li>
+                        <li>You want tactics, not motivation</li>
+                        <li>You prefer direct and honest over polished and padded</li>
+                        <li>You're ready to change your environment, not just your mindset</li>
+                    </ul>
+                </div>
+                <div class="who-box not-for">
+                    <h3>This Is Not For You If:</h3>
+                    <ul>
+                        <li>You want a complete digital detox program</li>
+                        <li>You're looking for scientific citations and studies</li>
+                        <li>You need hand-holding and daily check-ins</li>
+                        <li>You want to be told everything will be easy</li>
+                        <li>You're happy with your current relationship with your phone</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stance -->
+    <section class="stance">
+        <div class="container fade-in">
+            <p>This book assumes you're capable, you're tired of nonsense, and you want something that actually works.</p>
+            <p class="dim">No hype. No preaching. No "you're broken" energy.<br>Just clarity—and a plan.</p>
+        </div>
+    </section>
+
+    <!-- Bonuses -->
+    <section class="bonuses">
+        <div class="container fade-in">
+            <div class="section-label">Included Free</div>
+            <h2>Tactical Bonuses</h2>
+            <div class="bonus-grid">
+                <div class="bonus-card">
+                    <h3>The Field Manual</h3>
+                    <p>A one-page printable reference. The loop, the tactics, the rules. Stick it on your wall.</p>
+                </div>
+                <div class="bonus-card">
+                    <h3>The Friction Audit</h3>
+                    <p>A two-page worksheet to identify your triggers, audit your apps, and build your personal action plan.</p>
+                </div>
+                <div class="bonus-card">
+                    <h3>The Relapse Playbook</h3>
+                    <p>What to do after a binge, spiral, or lost week. Scripts, resets, and damage control. No shame, just protocol.</p>
+                </div>
+                <div class="bonus-card">
+                    <h3>The Attention Autopsy</h3>
+                    <p>A brutally simple diagnostic. Find out which loops are doing the damage—novelty, validation, escape, completion, or connection.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta" id="buy">
+        <div class="container">
+            <div class="price">$9</div>
+            <p class="price-note">Instant download. PDF + EPUB. No email required.</p>
+            <a href="#" class="cta-button">Buy Now</a>
+            <p class="closer">You are outgunned—but <span>not outmaneuvered.</span></p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Questions? <a href="mailto:matt@dopaminewar.com">matt@dopaminewar.com</a></p>
+        <p>© 2025 Matt Livingston</p>
+    </footer>
+
+    <script>
+        // Fade in on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+</html>

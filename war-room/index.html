@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- * lone wolf, steady course | Matt Livingston -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>War Room | Dopamine War</title>
+  <meta name="description" content="Your command center. Track threats, execute battle plans, and log daily operations.">
+  
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  
+  <style>
+    /* War Room specific styles */
+    .war-room {
+      min-height: 100vh;
+      padding-bottom: var(--space-2xl);
+    }
+    
+    /* Threat Overview */
+    .threat-overview {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      text-align: center;
+    }
+    
+    .threat-overview__label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+    }
+    
+    .threat-overview__score {
+      font-family: var(--font-mono);
+      font-size: 6rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .threat-overview__score.critical { color: var(--color-critical); }
+    .threat-overview__score.high { color: var(--color-high); }
+    .threat-overview__score.moderate { color: var(--color-moderate); }
+    .threat-overview__score.low { color: var(--color-low); }
+    .threat-overview__score.secure { color: var(--color-secure); }
+    
+    .threat-overview__status {
+      margin-bottom: var(--space-md);
+    }
+    
+    .threat-overview__date {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+    }
+    
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .dashboard-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+    }
+    
+    .dashboard-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .dashboard-card__title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+    }
+    
+    .dashboard-card__action {
+      font-size: 0.8125rem;
+      color: var(--color-accent);
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    
+    .dashboard-card__action:hover {
+      color: var(--color-accent-hover);
+    }
+    
+    /* Active Fronts */
+    .front-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    
+    .front-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    
+    .front-item__icon {
+      font-size: 1.25rem;
+      width: 32px;
+      text-align: center;
+    }
+    
+    .front-item__content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .front-item__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-xs);
+    }
+    
+    .front-item__name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .front-item__score {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+    
+    .front-item__score.critical { color: var(--color-critical); }
+    .front-item__score.high { color: var(--color-high); }
+    .front-item__score.moderate { color: var(--color-moderate); }
+    .front-item__score.low { color: var(--color-low); }
+    .front-item__score.secure { color: var(--color-secure); }
+    
+    .front-item__bar {
+      height: 4px;
+      background: var(--color-bg);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .front-item__bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    
+    .front-item__bar-fill.critical { background: var(--color-critical); }
+    .front-item__bar-fill.high { background: var(--color-high); }
+    .front-item__bar-fill.moderate { background: var(--color-moderate); }
+    .front-item__bar-fill.low { background: var(--color-low); }
+    .front-item__bar-fill.secure { background: var(--color-secure); }
+    
+    /* Battle Plans */
+    .battle-plan {
+      padding: var(--space-md);
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-md);
+    }
+    
+    .battle-plan:last-child {
+      margin-bottom: 0;
+    }
+    
+    .battle-plan__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .battle-plan__icon {
+      font-size: 1rem;
+    }
+    
+    .battle-plan__front {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    
+    .battle-plan__tactic {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+    
+    /* Casualty Report */
+    .casualty-check {
+      text-align: center;
+      padding: var(--space-lg) 0;
+    }
+    
+    .casualty-check__question {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .casualty-check__buttons {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-md);
+    }
+    
+    .casualty-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-md) var(--space-xl);
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .casualty-btn:hover {
+      border-color: var(--color-border-hover);
+    }
+    
+    .casualty-btn--held:hover {
+      border-color: var(--color-low);
+      background: var(--color-low-glow);
+    }
+    
+    .casualty-btn--damage:hover {
+      border-color: var(--color-critical);
+      background: var(--color-critical-glow);
+    }
+    
+    .casualty-btn__icon {
+      font-size: 1.5rem;
+    }
+    
+    .casualty-btn__label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+    
+    .casualty-logged {
+      text-align: center;
+      padding: var(--space-lg) 0;
+    }
+    
+    .casualty-logged__icon {
+      font-size: 2rem;
+      margin-bottom: var(--space-sm);
+    }
+    
+    .casualty-logged__message {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    
+    .casualty-logged__streak {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--color-low);
+    }
+    
+    /* Casualty Log History */
+    .casualty-log {
+      margin-top: var(--space-lg);
+      padding-top: var(--space-lg);
+      border-top: 1px solid var(--color-border);
+    }
+    
+    .casualty-log__title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-md);
+    }
+    
+    .casualty-log__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    .casualty-log__item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.8125rem;
+    }
+    
+    .casualty-log__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .casualty-log__dot.held {
+      background: var(--color-low);
+    }
+    
+    .casualty-log__dot.damage {
+      background: var(--color-critical);
+    }
+    
+    .casualty-log__date {
+      color: var(--color-text-muted);
+    }
+    
+    .casualty-log__status {
+      color: var(--color-text-secondary);
+    }
+    
+    .casualty-log__empty {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+    
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+    
+    .quick-action {
+      flex: 1;
+      min-width: 140px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      transition: all var(--transition-fast);
+    }
+    
+    .quick-action:hover {
+      border-color: var(--color-border-hover);
+      color: var(--color-text);
+    }
+    
+    .quick-action__icon {
+      font-size: 1.25rem;
+    }
+    
+    /* Full width card */
+    .dashboard-card--full {
+      grid-column: 1 / -1;
+    }
+    
+    @media (max-width: 640px) {
+      .threat-overview__score {
+        font-size: 4rem;
+      }
+      
+      .quick-actions {
+        flex-direction: column;
+      }
+      
+      .quick-action {
+        min-width: auto;
+      }
+      
+      .casualty-check__buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .casualty-btn {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+    
+    /* Battle Card Modal */
+    .battle-card-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    
+    .battle-card-modal.active {
+      opacity: 1;
+    }
+    
+    .battle-card-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+    }
+    
+    .battle-card-modal__content {
+      position: relative;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .battle-card-modal__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .battle-card-modal__header h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+    
+    .battle-card-modal__close {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      color: var(--color-text-secondary);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .battle-card-modal__close:hover {
+      background: var(--color-bg-elevated);
+      color: var(--color-text);
+    }
+    
+    .battle-card-modal__preview {
+      margin-bottom: var(--space-lg);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    
+    .battle-card-modal__actions {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    
+    .battle-card-modal__actions .btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+    
+    .battle-card-modal__hint {
+      text-align: center;
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+    }
+    
+    @media (max-width: 640px) {
+      .battle-card-modal__actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="war-room">
+    <header class="header">
+      <div class="container header__inner">
+        <a href="/" class="header__logo">DOPAMINE WAR</a>
+        <nav class="header__nav">
+          <a href="/war-room/" class="header__link header__link--active">War Room</a>
+          <a href="/profiles/" class="header__link">Enemy Intel</a>
+          <a href="/declassified/" class="header__link">Declassified</a>
+        </nav>
+      </div>
+    </header>
+    
+    <main class="section">
+      <div class="container">
+        <!-- Threat Overview -->
+        <div class="threat-overview">
+          <div class="threat-overview__label">Overall Threat Level</div>
+          <div class="threat-overview__score" id="overallScore">--</div>
+          <div class="threat-overview__status">
+            <span class="threat-badge" id="threatBadge">
+              <span id="threatLabel">LOADING</span>
+            </span>
+          </div>
+          <div class="threat-overview__date">
+            Last assessed: <span id="auditDate">--</span>
+          </div>
+        </div>
+        
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+          <!-- Active Fronts -->
+          <div class="dashboard-card">
+            <div class="dashboard-card__header">
+              <h2 class="dashboard-card__title">Active Fronts</h2>
+              <a href="/profiles/" class="dashboard-card__action">View Intel →</a>
+            </div>
+            <div class="front-list" id="frontList">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          
+          <!-- Casualty Report -->
+          <div class="dashboard-card">
+            <div class="dashboard-card__header">
+              <h2 class="dashboard-card__title">Daily Casualty Report</h2>
+            </div>
+            
+            <!-- Check-in (if not logged today) -->
+            <div class="casualty-check" id="casualtyCheck">
+              <p class="casualty-check__question">Did you hold the line today?</p>
+              <div class="casualty-check__buttons">
+                <button class="casualty-btn casualty-btn--held" data-status="held">
+                  <span class="casualty-btn__icon">🛡️</span>
+                  <span class="casualty-btn__label">Held the Line</span>
+                </button>
+                <button class="casualty-btn casualty-btn--damage" data-status="damage">
+                  <span class="casualty-btn__icon">💥</span>
+                  <span class="casualty-btn__label">Took Damage</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Already logged (if logged today) -->
+            <div class="casualty-logged hidden" id="casualtyLogged">
+              <div class="casualty-logged__icon" id="loggedIcon">🛡️</div>
+              <p class="casualty-logged__message" id="loggedMessage">You held the line today.</p>
+              <p class="casualty-logged__streak" id="loggedStreak"></p>
+            </div>
+            
+            <!-- Log History -->
+            <div class="casualty-log">
+              <h3 class="casualty-log__title">Recent Operations</h3>
+              <div class="casualty-log__list" id="casualtyLogList">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Battle Plans -->
+          <div class="dashboard-card dashboard-card--full">
+            <div class="dashboard-card__header">
+              <h2 class="dashboard-card__title">Battle Plans</h2>
+              <span class="dashboard-card__action" id="refreshPlans">Refresh Tactics</span>
+            </div>
+            <div id="battlePlans">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <a href="/" class="quick-action">
+            <span class="quick-action__icon">🔄</span>
+            <span>Retake Assessment</span>
+          </a>
+          <a href="/profiles/" class="quick-action">
+            <span class="quick-action__icon">📋</span>
+            <span>Enemy Profiles</span>
+          </a>
+          <a href="/declassified/" class="quick-action">
+            <span class="quick-action__icon">🔒</span>
+            <span>Declassified Intel</span>
+          </a>
+          <button class="quick-action" id="shareBtn">
+            <span class="quick-action__icon">📤</span>
+            <span>Share Battle Card</span>
+          </button>
+        </div>
+      </div>
+    </main>
+    
+    <footer class="footer">
+      <div class="container">
+        <p class="footer__text">All data stored locally. Your war, your privacy.</p>
+      </div>
+    </footer>
+  </div>
+  
+  <script src="../app.js"></script>
+  <script>
+    // ==========================================
+    // Initialize War Room
+    // ==========================================
+    function init() {
+      // Require audit completion
+      if (!DW.utils.requireAudit()) return;
+      
+      renderThreatOverview();
+      renderFronts();
+      renderBattlePlans();
+      renderCasualtyReport();
+      
+      // Event listeners
+      document.querySelectorAll('.casualty-btn').forEach(btn => {
+        btn.addEventListener('click', () => logCasualty(btn.dataset.status));
+      });
+      
+      document.getElementById('refreshPlans').addEventListener('click', renderBattlePlans);
+      document.getElementById('shareBtn').addEventListener('click', generateBattleCard);
+    }
+    
+    // ==========================================
+    // Render Functions
+    // ==========================================
+    function renderThreatOverview() {
+      const score = DW.audit.getOverallScore();
+      const threat = DW.audit.getThreatLevel(score);
+      const auditDate = DW.audit.getDate();
+      
+      document.getElementById('overallScore').textContent = score;
+      document.getElementById('overallScore').className = `threat-overview__score ${threat.color}`;
+      
+      document.getElementById('threatBadge').className = `threat-badge threat-badge--${threat.color}`;
+      document.getElementById('threatLabel').textContent = `THREAT LEVEL: ${threat.label}`;
+      
+      document.getElementById('auditDate').textContent = auditDate 
+        ? DW.utils.formatDate(auditDate) 
+        : 'Unknown';
+    }
+    
+    function renderFronts() {
+      const scores = DW.audit.getScores();
+      const frontList = document.getElementById('frontList');
+      
+      // Sort by score (highest threat first)
+      const sorted = Object.entries(scores)
+        .sort(([, a], [, b]) => b - a);
+      
+      frontList.innerHTML = sorted.map(([frontId, score]) => {
+        const front = DW.FRONTS[frontId];
+        if (!front) return '';
+        
+        const threat = DW.audit.getThreatLevel(score);
+        
+        return `
+          <div class="front-item">
+            <div class="front-item__icon">${front.icon}</div>
+            <div class="front-item__content">
+              <div class="front-item__header">
+                <span class="front-item__name">${front.name}</span>
+                <span class="front-item__score ${threat.color}">${score}</span>
+              </div>
+              <div class="front-item__bar">
+                <div class="front-item__bar-fill ${threat.color}" style="width: ${score}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function renderBattlePlans() {
+      const scores = DW.audit.getScores();
+      const plans = DW.battlePlans.generate(scores);
+      const container = document.getElementById('battlePlans');
+      
+      if (plans.length === 0) {
+        container.innerHTML = '<p class="text-muted">Complete an assessment to generate battle plans.</p>';
+        return;
+      }
+      
+      container.innerHTML = plans.map(plan => `
+        <div class="battle-plan">
+          <div class="battle-plan__header">
+            <span class="battle-plan__icon">${plan.front.icon}</span>
+            <span class="battle-plan__front">${plan.front.name}</span>
+            <span class="threat-badge threat-badge--${plan.threatLevel.color}" style="margin-left: auto; font-size: 0.625rem;">
+              ${plan.threatLevel.label}
+            </span>
+          </div>
+          <p class="battle-plan__tactic">${plan.tactics}</p>
+        </div>
+      `).join('');
+    }
+    
+    function renderCasualtyReport() {
+      const hasLogged = DW.casualtyLog.hasLoggedToday();
+      const todayEntry = DW.casualtyLog.getTodayEntry();
+      const entries = DW.casualtyLog.getEntries();
+      const streak = DW.casualtyLog.getStreak();
+      
+      const checkEl = document.getElementById('casualtyCheck');
+      const loggedEl = document.getElementById('casualtyLogged');
+      
+      if (hasLogged) {
+        checkEl.classList.add('hidden');
+        loggedEl.classList.remove('hidden');
+        
+        const isHeld = todayEntry.status === 'held';
+        document.getElementById('loggedIcon').textContent = isHeld ? '🛡️' : '💥';
+        document.getElementById('loggedMessage').textContent = isHeld 
+          ? 'You held the line today.' 
+          : 'You took damage today. Regroup tomorrow.';
+        
+        const streakEl = document.getElementById('loggedStreak');
+        if (streak > 1) {
+          streakEl.textContent = `🔥 ${streak} day streak`;
+          streakEl.classList.remove('hidden');
+        } else {
+          streakEl.classList.add('hidden');
+        }
+      } else {
+        checkEl.classList.remove('hidden');
+        loggedEl.classList.add('hidden');
+      }
+      
+      // Render log history
+      const logList = document.getElementById('casualtyLogList');
+      const recentEntries = entries.slice(0, 7);
+      
+      if (recentEntries.length === 0) {
+        logList.innerHTML = '<p class="casualty-log__empty">No operations logged yet.</p>';
+      } else {
+        logList.innerHTML = recentEntries.map(entry => `
+          <div class="casualty-log__item">
+            <div class="casualty-log__dot ${entry.status}"></div>
+            <span class="casualty-log__date">${DW.utils.formatDateShort(entry.date)}</span>
+            <span class="casualty-log__status">${entry.status === 'held' ? 'Held the line' : 'Took damage'}</span>
+          </div>
+        `).join('');
+      }
+    }
+    
+    // ==========================================
+    // Actions
+    // ==========================================
+    function logCasualty(status) {
+      DW.casualtyLog.addEntry({ status });
+      renderCasualtyReport();
+    }
+    
+    function generateBattleCard() {
+      const score = DW.audit.getOverallScore();
+      const threat = DW.audit.getThreatLevel(score);
+      const scores = DW.audit.getScores();
+      const streak = DW.casualtyLog.getStreak();
+      
+      // Sort fronts by score
+      const sortedFronts = Object.entries(scores)
+        .sort(([, a], [, b]) => b - a);
+      
+      // Create canvas (1200x630 for social sharing)
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 630;
+      const ctx = canvas.getContext('2d');
+      
+      // Colors
+      const colors = {
+        critical: '#dc2626',
+        high: '#f97316',
+        moderate: '#eab308',
+        low: '#22c55e',
+        secure: '#06b6d4',
+      };
+      const threatColor = colors[threat.color];
+      
+      // Background
+      ctx.fillStyle = '#0a0a0b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Subtle grid pattern
+      ctx.strokeStyle = '#1a1a1a';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      
+      // Left accent bar
+      ctx.fillStyle = threatColor;
+      ctx.fillRect(0, 0, 8, canvas.height);
+      
+      // Header
+      ctx.fillStyle = threatColor;
+      ctx.font = '600 14px sans-serif';
+      ctx.letterSpacing = '2px';
+      ctx.fillText('DOPAMINE WAR — BATTLE CARD', 60, 50);
+      
+      // Main score
+      ctx.fillStyle = threatColor;
+      ctx.font = '700 140px sans-serif';
+      ctx.fillText(score.toString(), 60, 200);
+      
+      // Threat badge
+      ctx.fillStyle = threatColor + '30';
+      roundRect(ctx, 60, 220, 200, 36, 4);
+      ctx.fill();
+      ctx.strokeStyle = threatColor;
+      ctx.lineWidth = 1;
+      roundRect(ctx, 60, 220, 200, 36, 4);
+      ctx.stroke();
+      
+      ctx.fillStyle = threatColor;
+      ctx.font = '600 14px sans-serif';
+      ctx.fillText(`THREAT LEVEL: ${threat.label}`, 75, 244);
+      
+      // Streak (if any)
+      if (streak > 0) {
+        ctx.fillStyle = '#22c55e';
+        ctx.font = '500 16px sans-serif';
+        ctx.fillText(`🔥 ${streak} day streak`, 60, 295);
+      }
+      
+      // Divider
+      ctx.fillStyle = '#2a2a2e';
+      ctx.fillRect(440, 40, 1, 550);
+      
+      // Right side - Front breakdown
+      ctx.fillStyle = '#5a5a5e';
+      ctx.font = '600 12px sans-serif';
+      ctx.fillText('THREAT BREAKDOWN', 480, 50);
+      
+      // Front bars
+      let yPos = 90;
+      sortedFronts.forEach(([frontId, frontScore], index) => {
+        const front = DW.FRONTS[frontId];
+        if (!front || index > 7) return;
+        
+        const frontThreat = DW.audit.getThreatLevel(frontScore);
+        const barColor = colors[frontThreat.color];
+        
+        // Front name and score
+        ctx.fillStyle = '#e8e8e8';
+        ctx.font = '500 15px sans-serif';
+        ctx.fillText(`${front.icon} ${front.name}`, 480, yPos);
+        
+        ctx.fillStyle = barColor;
+        ctx.font = '600 15px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(frontScore.toString(), 1140, yPos);
+        ctx.textAlign = 'left';
+        
+        // Progress bar background
+        ctx.fillStyle = '#1a1a1a';
+        roundRect(ctx, 480, yPos + 10, 660, 8, 4);
+        ctx.fill();
+        
+        // Progress bar fill
+        ctx.fillStyle = barColor;
+        const barWidth = (frontScore / 100) * 660;
+        if (barWidth > 0) {
+          roundRect(ctx, 480, yPos + 10, barWidth, 8, 4);
+          ctx.fill();
+        }
+        
+        yPos += 60;
+      });
+      
+      // Footer
+      ctx.fillStyle = '#3a3a3e';
+      ctx.fillRect(0, 590, canvas.width, 1);
+      
+      ctx.fillStyle = '#5a5a5e';
+      ctx.font = '400 13px sans-serif';
+      ctx.fillText('dopaminewar.com', 60, 615);
+      
+      ctx.textAlign = 'right';
+      ctx.fillText('Your data never leaves your device.', 1140, 615);
+      ctx.textAlign = 'left';
+      
+      // Show modal with options
+      showBattleCardModal(canvas);
+    }
+    
+    // Helper: rounded rectangle
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+    
+    function showBattleCardModal(canvas) {
+      // Create modal
+      const modal = document.createElement('div');
+      modal.className = 'battle-card-modal';
+      modal.innerHTML = `
+        <div class="battle-card-modal__backdrop"></div>
+        <div class="battle-card-modal__content">
+          <div class="battle-card-modal__header">
+            <h3>Your Battle Card</h3>
+            <button class="battle-card-modal__close">&times;</button>
+          </div>
+          <div class="battle-card-modal__preview"></div>
+          <div class="battle-card-modal__actions">
+            <button class="btn btn--primary" id="downloadCard">
+              <span>📥</span> Download Image
+            </button>
+            <button class="btn btn--secondary" id="copyCard">
+              <span>📋</span> Copy to Clipboard
+            </button>
+          </div>
+          <p class="battle-card-modal__hint">Share your progress. Challenge others to take the assessment.</p>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Add canvas to preview
+      const preview = modal.querySelector('.battle-card-modal__preview');
+      canvas.style.maxWidth = '100%';
+      canvas.style.height = 'auto';
+      canvas.style.borderRadius = '8px';
+      preview.appendChild(canvas);
+      
+      // Close handlers
+      const close = () => modal.remove();
+      modal.querySelector('.battle-card-modal__backdrop').addEventListener('click', close);
+      modal.querySelector('.battle-card-modal__close').addEventListener('click', close);
+      
+      // Download
+      modal.querySelector('#downloadCard').addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.download = 'dopamine-war-battle-card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+      
+      // Copy to clipboard
+      modal.querySelector('#copyCard').addEventListener('click', async () => {
+        try {
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          await navigator.clipboard.write([
+            new ClipboardItem({ 'image/png': blob })
+          ]);
+          const btn = modal.querySelector('#copyCard');
+          btn.innerHTML = '<span>✓</span> Copied!';
+          setTimeout(() => {
+            btn.innerHTML = '<span>📋</span> Copy to Clipboard';
+          }, 2000);
+        } catch (err) {
+          alert('Could not copy to clipboard. Try downloading instead.');
+        }
+      });
+      
+      // Animate in
+      requestAnimationFrame(() => modal.classList.add('active'));
+    }
+    
+    // ==========================================
+    // Init
+    // ==========================================
+    init();
+  </script>
+</body>
+</html>

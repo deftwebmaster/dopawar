@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- * lone wolf, own sky | Matt Livingston -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Declassified | Dopamine War</title>
+  <meta name="description" content="Deeper intel on the harder fronts. Opt-in content for those ready to confront the full scope.">
+  
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  
+  <style>
+    /* Declassified-specific styles */
+    .declassified-gate {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl) 0;
+    }
+    
+    .gate-card {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: center;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-accent);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+    }
+    
+    .gate-card__icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .gate-card__title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+    }
+    
+    .gate-card__description {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-lg);
+      line-height: 1.7;
+    }
+    
+    .gate-card__warning {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      padding: var(--space-md);
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .gate-card__actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    
+    /* Content area */
+    .declassified-content {
+      display: none;
+      padding-bottom: var(--space-2xl);
+    }
+    
+    .declassified-content.active {
+      display: block;
+    }
+    
+    .declassified-hero {
+      padding: var(--space-2xl) 0;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-xl);
+    }
+    
+    .declassified-hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      background: var(--color-accent-muted);
+      border: 1px solid var(--color-accent);
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-lg);
+    }
+    
+    .declassified-hero__title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: var(--space-md);
+    }
+    
+    .declassified-hero__description {
+      font-size: 1.125rem;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+    }
+    
+    /* Extended Profile Card */
+    .extended-profile {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-xl);
+      overflow: hidden;
+    }
+    
+    .extended-profile__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--color-bg-elevated);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .extended-profile__icon {
+      font-size: 2.5rem;
+    }
+    
+    .extended-profile__title-group {
+      flex: 1;
+    }
+    
+    .extended-profile__name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    
+    .extended-profile__tagline {
+      color: var(--color-text-muted);
+    }
+    
+    .extended-profile__body {
+      padding: var(--space-lg);
+    }
+    
+    .extended-section {
+      margin-bottom: var(--space-xl);
+    }
+    
+    .extended-section:last-child {
+      margin-bottom: 0;
+    }
+    
+    .extended-section__title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .extended-section__content {
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+    }
+    
+    .extended-section__content p {
+      margin-bottom: var(--space-md);
+    }
+    
+    .extended-section__content p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .extended-section__list {
+      list-style: none;
+    }
+    
+    .extended-section__list li {
+      padding: var(--space-sm) 0;
+      padding-left: var(--space-lg);
+      position: relative;
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .extended-section__list li:last-child {
+      border-bottom: none;
+    }
+    
+    .extended-section__list li::before {
+      content: '⚠';
+      position: absolute;
+      left: 0;
+      color: var(--color-high);
+    }
+    
+    /* Recovery path */
+    .recovery-path {
+      display: grid;
+      gap: var(--space-md);
+    }
+    
+    .recovery-step {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+    }
+    
+    .recovery-step__number {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      width: 24px;
+      flex-shrink: 0;
+    }
+    
+    .recovery-step__content h4 {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .recovery-step__content p {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+    }
+    
+    /* Back link */
+    .back-to-profiles {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+      margin-bottom: var(--space-lg);
+      transition: color var(--transition-fast);
+    }
+    
+    .back-to-profiles:hover {
+      color: var(--color-text);
+    }
+    
+    @media (max-width: 640px) {
+      .declassified-hero__title {
+        font-size: 2rem;
+      }
+      
+      .extended-profile__header {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a href="/" class="header__logo">DOPAMINE WAR</a>
+      <nav class="header__nav">
+        <a href="/war-room/" class="header__link">War Room</a>
+        <a href="/profiles/" class="header__link">Enemy Intel</a>
+        <a href="/declassified/" class="header__link header__link--active">Declassified</a>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Gate -->
+  <div class="declassified-gate" id="gate">
+    <div class="container">
+      <div class="gate-card">
+        <div class="gate-card__icon">🔒</div>
+        <h1 class="gate-card__title">Declassified Intel</h1>
+        <p class="gate-card__description">
+          This section contains detailed information about pornography and gambling addiction—two of the most neurologically impactful fronts in the dopamine war.
+        </p>
+        <div class="gate-card__warning">
+          This content is clinical and direct. It's here because these topics are often avoided, leaving people without the information they need. No judgment, just intel.
+        </div>
+        <div class="gate-card__actions">
+          <button class="btn btn--primary btn--large" id="unlockBtn">Access Declassified Intel</button>
+          <a href="/profiles/" class="btn btn--ghost">Return to Main Profiles</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Content (hidden until unlocked) -->
+  <main class="declassified-content" id="content">
+    <div class="container">
+      <a href="/profiles/" class="back-to-profiles">← Back to Enemy Intel</a>
+      
+      <section class="declassified-hero">
+        <div class="declassified-hero__badge">🔓 Declassified</div>
+        <h1 class="declassified-hero__title">The Harder Fronts</h1>
+        <p class="declassified-hero__description">
+          These are the fronts that carry the most stigma and often the most damage. Understanding the mechanics isn't permission—it's preparation.
+        </p>
+      </section>
+      
+      <!-- Pornography Profile -->
+      <article class="extended-profile">
+        <div class="extended-profile__header">
+          <div class="extended-profile__icon">🔞</div>
+          <div class="extended-profile__title-group">
+            <h2 class="extended-profile__name">Pornography</h2>
+            <p class="extended-profile__tagline">Supernormal stimuli rewiring your arousal template</p>
+          </div>
+        </div>
+        <div class="extended-profile__body">
+          <div class="extended-section">
+            <h3 class="extended-section__title">The Neurological Reality</h3>
+            <div class="extended-section__content">
+              <p>Pornography delivers what researchers call "supernormal stimuli"—exaggerated versions of natural triggers that hijack evolved responses. Your brain didn't evolve for unlimited novelty, instant access, and professionally produced content optimized for maximum arousal.</p>
+              <p>Heavy use leads to downregulation of dopamine receptors. The same content that once excited you becomes boring, requiring either more extreme material or longer sessions. This is tolerance, identical to drug addiction.</p>
+              <p>Studies show changes in brain structure and function among heavy users, particularly in areas related to reward sensitivity, impulse control, and decision-making. These changes are reversible with abstinence, but recovery takes time.</p>
+            </div>
+          </div>
+          
+          <div class="extended-section">
+            <h3 class="extended-section__title">Warning Signs of Escalation</h3>
+            <ul class="extended-section__list">
+              <li>Content that once felt extreme now feels normal</li>
+              <li>Longer sessions needed to achieve same effect</li>
+              <li>Difficulty achieving arousal with real partners</li>
+              <li>Seeking out increasingly specific or taboo material</li>
+              <li>Using porn to manage emotions rather than for pleasure</li>
+              <li>Failed attempts to cut back or stop</li>
+              <li>Continuing despite negative consequences (relationship, work, self-image)</li>
+            </ul>
+          </div>
+          
+          <div class="extended-section">
+            <h3 class="extended-section__title">Recovery Path</h3>
+            <div class="recovery-path">
+              <div class="recovery-step">
+                <span class="recovery-step__number">01</span>
+                <div class="recovery-step__content">
+                  <h4>Build Friction</h4>
+                  <p>Install blockers on all devices. Not for willpower—for interrupting autopilot. The goal is to create a pause between urge and action.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">02</span>
+                <div class="recovery-step__content">
+                  <h4>Expect the Flatline</h4>
+                  <p>Many experience a period of low libido during recovery. This is normal—your brain is recalibrating. It passes.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">03</span>
+                <div class="recovery-step__content">
+                  <h4>Identify Triggers</h4>
+                  <p>Boredom, stress, loneliness, and specific times of day are common triggers. Map yours. Awareness precedes control.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">04</span>
+                <div class="recovery-step__content">
+                  <h4>Physical Outlet</h4>
+                  <p>Sexual energy doesn't disappear—it redirects. Exercise, particularly intense or exhausting activity, helps metabolize urges.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">05</span>
+                <div class="recovery-step__content">
+                  <h4>Time</h4>
+                  <p>Receptor density recovers, but slowly. Most heavy users report significant improvement at 90 days, full recovery at 6-12 months.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+      
+      <!-- Gambling Profile -->
+      <article class="extended-profile">
+        <div class="extended-profile__header">
+          <div class="extended-profile__icon">🎰</div>
+          <div class="extended-profile__title-group">
+            <h2 class="extended-profile__name">Gambling & Speculation</h2>
+            <p class="extended-profile__tagline">Variable ratio reinforcement at its most dangerous</p>
+          </div>
+        </div>
+        <div class="extended-profile__body">
+          <div class="extended-section">
+            <h3 class="extended-section__title">The Neurological Reality</h3>
+            <div class="extended-section__content">
+              <p>Gambling exploits the most addictive reward schedule ever identified: variable ratio reinforcement. Wins come at unpredictable intervals, making the behavior extremely resistant to extinction. Your brain can't learn to stop because the pattern is random.</p>
+              <p>Near-misses activate reward circuits almost as strongly as wins. Slot machines are engineered to deliver near-misses far more often than chance would produce. Your brain interprets "almost winning" as evidence that winning is close.</p>
+              <p>Day trading and cryptocurrency speculation use identical neurological mechanisms. The constant price movements, the wins and losses, the feeling of skill—it's gambling in a financial costume. The market doesn't care about your technical analysis.</p>
+            </div>
+          </div>
+          
+          <div class="extended-section">
+            <h3 class="extended-section__title">Warning Signs</h3>
+            <ul class="extended-section__list">
+              <li>Chasing losses—betting more to recover what you've lost</li>
+              <li>Lying about gambling activity or financial losses</li>
+              <li>Borrowing money to gamble or cover losses</li>
+              <li>Neglecting responsibilities for gambling</li>
+              <li>Feeling restless or irritable when trying to stop</li>
+              <li>Gambling to escape problems or relieve negative emotions</li>
+              <li>Returning to "get even" after losing</li>
+            </ul>
+          </div>
+          
+          <div class="extended-section">
+            <h3 class="extended-section__title">Recovery Path</h3>
+            <div class="recovery-path">
+              <div class="recovery-step">
+                <span class="recovery-step__number">01</span>
+                <div class="recovery-step__content">
+                  <h4>Self-Exclude</h4>
+                  <p>Most casinos and online platforms have self-exclusion programs. Use them. For trading apps, delete them entirely and switch to automated investing.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">02</span>
+                <div class="recovery-step__content">
+                  <h4>Financial Transparency</h4>
+                  <p>Hand financial control to a trusted person temporarily. This isn't about trust—it's about removing access during the highest-risk period.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">03</span>
+                <div class="recovery-step__content">
+                  <h4>Replace the Action</h4>
+                  <p>Gambling provides excitement and social interaction. Find replacements that deliver stimulation without financial risk—competitive games, sports, social activities.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">04</span>
+                <div class="recovery-step__content">
+                  <h4>Understand the Math</h4>
+                  <p>The house always wins over time. No system beats the odds long-term. Understanding this intellectually doesn't stop the urge, but it removes the rationalization.</p>
+                </div>
+              </div>
+              <div class="recovery-step">
+                <span class="recovery-step__number">05</span>
+                <div class="recovery-step__content">
+                  <h4>Professional Support</h4>
+                  <p>Gambling addiction often co-occurs with other issues and can have severe financial and relational consequences. Professional help is worth it.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+      
+      <!-- CTA -->
+      <div class="profiles-cta" style="text-align: center; padding: var(--space-xl); background: var(--color-bg-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg);">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: var(--space-sm);">Knowledge is the first weapon</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: var(--space-lg);">Now that you understand the enemy, assess your own fronts.</p>
+        <a href="/war-room/" class="btn btn--primary btn--large">Enter War Room</a>
+      </div>
+    </div>
+  </main>
+  
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__text">This information is educational, not medical advice. If you're struggling, seek professional help.</p>
+    </div>
+  </footer>
+  
+  <script src="../app.js"></script>
+  <script>
+    // Check if already unlocked
+    const isUnlocked = DW.storage.get(DW.STORAGE_KEYS.DECLASSIFIED_UNLOCKED);
+    
+    const gate = document.getElementById('gate');
+    const content = document.getElementById('content');
+    const unlockBtn = document.getElementById('unlockBtn');
+    
+    if (isUnlocked) {
+      gate.style.display = 'none';
+      content.classList.add('active');
+    }
+    
+    unlockBtn.addEventListener('click', () => {
+      DW.storage.set(DW.STORAGE_KEYS.DECLASSIFIED_UNLOCKED, true);
+      gate.style.display = 'none';
+      content.classList.add('active');
+      window.scrollTo(0, 0);
+    });
+  </script>
+</body>
+</html>
