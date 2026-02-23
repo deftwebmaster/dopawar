@@ -512,8 +512,10 @@
       <div class="container header__inner">
         <a href="/threat-assessment/" class="header__logo">DOPAMINE WAR</a>
         <nav class="header__nav">
-          <a href="/threat-assessment/war-room/" class="header__link header__link--active">War Room</a>
-          <a href="/threat-assessment/profiles/" class="header__link">Enemy Intel</a>
+          <a href="/threat-assessment/" class="header__link">Assessment</a>
+          <a href="/loop-map/" class="header__link">Loop Map</a>
+          <a href="/threat-assessment/war-room/" class="header__link header__link--active">Field Report</a>
+          <a href="/threat-assessment/profiles/" class="header__link">Intel</a>
           <a href="/threat-assessment/declassified/" class="header__link">Declassified</a>
         </nav>
       </div>
@@ -523,7 +525,7 @@
       <div class="container">
         <!-- Threat Overview -->
         <div class="threat-overview">
-          <div class="threat-overview__label">Overall Threat Level</div>
+          <div class="threat-overview__label">Control Assessment Score</div>
           <div class="threat-overview__score" id="overallScore">--</div>
           <div class="threat-overview__status">
             <span class="threat-badge" id="threatBadge">
@@ -551,20 +553,20 @@
           <!-- Casualty Report -->
           <div class="dashboard-card">
             <div class="dashboard-card__header">
-              <h2 class="dashboard-card__title">Daily Casualty Report</h2>
+              <h2 class="dashboard-card__title">Daily Field Report</h2>
             </div>
             
             <!-- Check-in (if not logged today) -->
             <div class="casualty-check" id="casualtyCheck">
-              <p class="casualty-check__question">Did you hold the line today?</p>
+              <p class="casualty-check__question">How did your control systems hold today?</p>
               <div class="casualty-check__buttons">
                 <button class="casualty-btn casualty-btn--held" data-status="held">
                   <span class="casualty-btn__icon">🛡️</span>
-                  <span class="casualty-btn__label">Held the Line</span>
+                  <span class="casualty-btn__label">Held Control</span>
                 </button>
                 <button class="casualty-btn casualty-btn--damage" data-status="damage">
                   <span class="casualty-btn__icon">💥</span>
-                  <span class="casualty-btn__label">Took Damage</span>
+                  <span class="casualty-btn__label">System Override</span>
                 </button>
               </div>
             </div>
@@ -572,7 +574,7 @@
             <!-- Already logged (if logged today) -->
             <div class="casualty-logged hidden" id="casualtyLogged">
               <div class="casualty-logged__icon" id="loggedIcon">🛡️</div>
-              <p class="casualty-logged__message" id="loggedMessage">You held the line today.</p>
+              <p class="casualty-logged__message" id="loggedMessage">Control systems held today.</p>
               <p class="casualty-logged__streak" id="loggedStreak"></p>
             </div>
             
@@ -588,7 +590,7 @@
           <!-- Battle Plans -->
           <div class="dashboard-card dashboard-card--full">
             <div class="dashboard-card__header">
-              <h2 class="dashboard-card__title">Battle Plans</h2>
+              <h2 class="dashboard-card__title">Tactical Interventions</h2>
               <span class="dashboard-card__action" id="refreshPlans">Refresh Tactics</span>
             </div>
             <div id="battlePlans">
@@ -601,11 +603,11 @@
         <div class="quick-actions">
           <a href="/threat-assessment/" class="quick-action">
             <span class="quick-action__icon">🔄</span>
-            <span>Retake Assessment</span>
+            <span>Reassess Control</span>
           </a>
           <a href="/threat-assessment/profiles/" class="quick-action">
             <span class="quick-action__icon">📋</span>
-            <span>Enemy Profiles</span>
+            <span>Front Intel</span>
           </a>
           <a href="/threat-assessment/declassified/" class="quick-action">
             <span class="quick-action__icon">🔒</span>
@@ -613,7 +615,7 @@
           </a>
           <button class="quick-action" id="shareBtn">
             <span class="quick-action__icon">📤</span>
-            <span>Share Battle Card</span>
+            <span>Export Assessment</span>
           </button>
         </div>
       </div>
@@ -621,7 +623,7 @@
     
     <footer class="footer">
       <div class="container">
-        <p class="footer__text">All data stored locally. Your war, your privacy.</p>
+        <p class="footer__text">Dopamine War — Strategic Systems Lab &nbsp;·&nbsp; Design systems that make impulses irrelevant. &nbsp;·&nbsp; All data local.</p>
       </div>
     </footer>
   </div>
@@ -718,7 +720,7 @@
               ${plan.threatLevel.label}
             </span>
           </div>
-          <p class="battle-plan__tactic">${plan.tactics}</p>
+          <p class="battle-plan__tactic"><span style="font-size:0.75rem;font-family:var(--font-mono);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.08em;">Intervention → </span>${plan.tactics}</p>
         </div>
       `).join('');
     }
@@ -739,8 +741,8 @@
         const isHeld = todayEntry.status === 'held';
         document.getElementById('loggedIcon').textContent = isHeld ? '🛡️' : '💥';
         document.getElementById('loggedMessage').textContent = isHeld 
-          ? 'You held the line today.' 
-          : 'You took damage today. Regroup tomorrow.';
+          ? 'Control systems held today.' 
+          : 'Override logged. Adjust one constraint for tomorrow.';
         
         const streakEl = document.getElementById('loggedStreak');
         if (streak > 1) {
