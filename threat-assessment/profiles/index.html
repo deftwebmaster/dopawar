@@ -257,6 +257,150 @@
         border-top: 1px solid var(--color-border);
       }
     }
+
+    /* ── Archetype Cards ─────────────────────────────────────── */
+    .archetype-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-xl);
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+
+    .archetype-card--match {
+      border-color: var(--color-accent);
+    }
+
+    .archetype-card__header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-md);
+      padding: var(--space-lg);
+      background: var(--color-bg-elevated);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .archetype-card__icon {
+      font-size: 2.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .archetype-card__meta {
+      min-height: 1.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .archetype-match-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      background: rgba(220,38,38,0.12);
+      border: 1px solid var(--color-accent);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .archetype-card__name {
+      font-size: 1.375rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .archetype-card__tagline {
+      font-size: 0.875rem;
+      color: var(--color-text-muted);
+      font-style: italic;
+    }
+
+    .archetype-card__body {
+      padding: var(--space-lg);
+    }
+
+    .archetype-card__description {
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--space-lg);
+    }
+
+    .archetype-card__section-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-accent);
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .archetype-interventions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .archetype-intervention {
+      display: grid;
+      grid-template-columns: 1fr 24px 1fr;
+      gap: var(--space-sm);
+      align-items: start;
+      padding: var(--space-md);
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+    }
+
+    .archetype-intervention__label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .archetype-intervention__trigger {
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+    }
+
+    .archetype-intervention__arrow {
+      color: var(--color-accent);
+      font-weight: 700;
+      padding-top: 1.1rem;
+      text-align: center;
+    }
+
+    .archetype-intervention__change {
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+
+    .archetype-card__actions {
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--color-border);
+    }
+
+    @media (max-width: 640px) {
+      .archetype-intervention {
+        grid-template-columns: 1fr;
+      }
+      .archetype-intervention__arrow {
+        padding-top: 0;
+        text-align: left;
+      }
+    }
   </style>
 </head>
 <body>
@@ -274,15 +418,19 @@
   <main>
     <div class="container">
       <section class="profiles-hero">
-        <p class="profiles-hero__label">Intelligence Briefing</p>
-        <h1 class="profiles-hero__title">Know Your Enemy</h1>
+        <p class="profiles-hero__label">Pattern Archetypes</p>
+        <h1 class="profiles-hero__title">Identify Your Pattern</h1>
         <p class="profiles-hero__description">
-          Every front in this war uses the same weapon against you: your own reward system. 
-          These dossiers break down how each one operates, why it works, and what withdrawal looks like.
+          Compulsive loops aren't random. They follow predictable architectures. 
+          Identify which pattern is running your behavior — then get the system template designed to interrupt it.
         </p>
       </section>
       
-      <div class="profile-grid" id="profileGrid">
+      <div id="archetypeMatch" style="display:none;" class="card" style="margin-bottom:2rem;">
+        <!-- Populated by JS if audit is complete -->
+      </div>
+      
+      <div id="archetypeGrid">
         <!-- Populated by JS -->
       </div>
       
@@ -302,240 +450,198 @@
   
   <script src="../app.js"></script>
   <script>
-    // ==========================================
-    // Enemy Dossiers
-    // ==========================================
-    const DOSSIERS = {
-      social: {
-        tagline: 'Infinite scroll, infinite extraction',
-        mechanism: `Social media platforms are optimized for one metric: time on site. Every feature—the infinite scroll, the pull-to-refresh, the notification dots—is designed by teams of engineers and behavioral psychologists to trigger dopamine release and create habit loops. The variable reward schedule (sometimes you get likes, sometimes you don't) mirrors slot machine psychology.`,
-        tactics: [
-          'Intermittent reinforcement through unpredictable likes/comments',
-          'Social validation tied to self-worth metrics',
-          'FOMO triggers through stories and ephemeral content',
-          'Infinite scroll eliminates natural stopping points',
-          'Notification timing optimized for re-engagement',
+
+    // ── Archetype definitions ─────────────────────────────────
+    const ARCHETYPES = [
+      {
+        id: 'signal-seeker',
+        name: 'Signal Seeker',
+        icon: '📡',
+        tagline: 'Constant input. Compulsive refresh. Never quite satisfied.',
+        description: 'You cycle through feeds, tabs, and notifications looking for something — a hit of novelty, validation, or news. The signal never fully satisfies, so the loop continues. High social and news scores are the tell.',
+        fronts: ['social', 'news'],
+        matchLogic: scores => (scores.social || 0) >= 50 || (scores.news || 0) >= 50,
+        interventions: [
+          { trigger: 'Idle moment or task transition', change: 'Close all tabs before switching contexts. Reopen only what you need.' },
+          { trigger: 'Phone in hand with no specific purpose', change: 'Set a single daily "signal window" — 15 minutes, then put it down.' },
+          { trigger: 'Anxiety about missing something', change: 'Ask: what would actually change if I didn't see this? Usually nothing. Log that answer.' },
+          { trigger: 'Multiple tabs open simultaneously', change: 'One tab rule during focused work. Use a tab manager to park the rest.' },
         ],
-        withdrawal: [
-          { time: '1-3 days', desc: 'Phantom notifications, constant urge to check' },
-          { time: '1 week', desc: 'FOMO peaks, anxiety about missing out' },
-          { time: '2 weeks', desc: 'Urges decrease, boredom may increase' },
-          { time: '1 month', desc: 'New baseline established, clarity improves' },
-        ],
+        loopMapFront: 'social',
       },
-      sugar: {
-        tagline: 'Engineered to override your satiety signals',
-        mechanism: `Modern processed foods are designed by food scientists to hit the "bliss point"—the optimal combination of sugar, fat, and salt that maximizes craving without triggering satiety. Your brain responds to sugar like it does to drugs: dopamine floods the reward center, tolerance builds, and you need more to feel the same pleasure.`,
-        tactics: [
-          'Bliss point engineering maximizes craving',
-          'Blood sugar spikes followed by crashes create cycles',
-          'Emotional associations built through childhood',
-          'Ubiquitous availability removes friction',
-          'Marketing ties sugar to celebration and comfort',
+      {
+        id: 'relief-chaser',
+        name: 'Relief Chaser',
+        icon: '🧯',
+        tagline: 'Stress in. Dopamine hit out. Repeat.',
+        description: 'Your loops are stress-discharge mechanisms. When pressure builds — emotional, physical, social — you reach for something that numbs or resets. Sugar, gaming, shopping, or alcohol all fit this pattern. The relief is real but temporary, and the loop tightens over time.',
+        fronts: ['sugar', 'gaming', 'shopping'],
+        matchLogic: scores => {
+          const high = ['sugar','gaming','shopping'].filter(f => (scores[f] || 0) >= 50);
+          return high.length >= 2;
+        },
+        interventions: [
+          { trigger: 'Stress spike or emotional overload', change: 'Install a 90-second physical intercept: stand up, move, drink water before any other action.' },
+          { trigger: 'End of a hard day or task', change: 'Design a deliberate decompression ritual that doesn't involve a screen or consumable.' },
+          { trigger: 'Visible trigger nearby (snack, phone, game)', change: 'Remove proximity. Reorganize your environment so the default action requires effort.' },
+          { trigger: 'Feeling of earned reward after effort', change: 'Replace the consumable reward with a restorative one — walk, shower, music, rest.' },
         ],
-        withdrawal: [
-          { time: '1-3 days', desc: 'Intense cravings, headaches, irritability' },
-          { time: '1 week', desc: 'Energy fluctuations, mood swings' },
-          { time: '2 weeks', desc: 'Taste sensitivity returns, cravings weaken' },
-          { time: '1 month', desc: 'Stable energy, reduced appetite for sweets' },
-        ],
+        loopMapFront: 'sugar',
       },
-      news: {
-        tagline: 'Outrage is the algorithm\'s favorite emotion',
-        mechanism: `News media has evolved from information delivery to engagement farming. Outrage, fear, and conflict drive clicks and shares. The 24-hour news cycle creates artificial urgency, while algorithmic feeds prioritize emotionally triggering content. Your stress response becomes monetized.`,
-        tactics: [
-          'Negativity bias exploited for engagement',
-          'Breaking news alerts create false urgency',
-          'Tribal narratives trigger identity-based outrage',
-          'Algorithmic feeds create filter bubbles',
-          'Doomscrolling loops exploit anxiety',
+      {
+        id: 'escape-architect',
+        name: 'Escape Architect',
+        icon: '🚪',
+        tagline: 'Reality gets heavy. The exit is always one click away.',
+        description: 'You've built efficient systems for leaving the present moment. Gaming, doomscrolling, and porn are common exits. The behavior isn't about pleasure — it's about disappearing. Duration matters more than intensity. Sessions run long, and returning to the real environment feels harder each time.',
+        fronts: ['gaming', 'porn', 'news'],
+        matchLogic: scores => (scores.gaming || 0) >= 60 || (scores.porn || 0) >= 40,
+        interventions: [
+          { trigger: 'Feeling of dread or low-grade anxiety before a task', change: 'Name the thing you're avoiding. Write it down. That act alone disrupts the escape reflex.' },
+          { trigger: 'Long unstructured blocks of time', change: 'Structure time in 90-minute units with defined outputs. Ambiguity is the trigger.' },
+          { trigger: 'Session that runs longer than planned', change: 'Set a physical alarm — not a phone alarm. When it goes off, leave the space entirely.' },
+          { trigger: 'Returning from a session feeling worse', change: 'Log the gap between expected and actual feeling after each session. Data kills the illusion.' },
         ],
-        withdrawal: [
-          { time: '1-3 days', desc: 'Anxiety about being uninformed' },
-          { time: '1 week', desc: 'Realization that nothing urgent was missed' },
-          { time: '2 weeks', desc: 'Reduced baseline anxiety, clearer thinking' },
-          { time: '1 month', desc: 'Ability to consume news intentionally, not reactively' },
-        ],
+        loopMapFront: 'gaming',
       },
-      gaming: {
-        tagline: 'Variable rewards in a skinner box you paid for',
-        mechanism: `Video games are masterfully designed reward systems. Loot boxes, experience points, daily login bonuses, and achievement systems all exploit the same dopamine pathways as gambling. The "one more game" feeling is engineered through carefully tuned feedback loops.`,
-        tactics: [
-          'Variable reward schedules (loot, drops, matchmaking)',
-          'Progress systems create sunk cost attachment',
-          'Social obligations through guilds and team games',
-          'Daily rewards punish absence',
-          'Matchmaking tuned to maximize engagement, not fairness',
+      {
+        id: 'fuel-dependent',
+        name: 'Fuel Dependent',
+        icon: '⚗️',
+        tagline: 'Running on borrowed energy. The debt compounds.',
+        description: 'Your baseline functioning depends on external inputs — caffeine primarily, sometimes sugar or stimulants. You've calibrated your system around substances rather than sleep and recovery. Withdrawal isn't a crisis — it's Tuesday morning. The dependency is so normalized it's invisible.',
+        fronts: ['caffeine', 'sugar'],
+        matchLogic: scores => (scores.caffeine || 0) >= 50,
+        interventions: [
+          { trigger: 'Unable to start the day without caffeine', change: 'Delay first caffeine 90 minutes after waking. Let cortisol do its job before supplementing.' },
+          { trigger: 'Afternoon slump requiring a second dose', change: 'The slump is sleep debt. Address the debt, not the symptom. Hard noon cutoff.' },
+          { trigger: 'Headache or fog when caffeine is skipped', change: 'That's withdrawal, not a caffeine deficiency. Taper 25% per week to reset baseline.' },
+          { trigger: 'Sugar + caffeine stacked to push through fatigue', change: 'Stacking is a compounding loan. One hour of real sleep replaces both — protect it.' },
         ],
-        withdrawal: [
-          { time: '1-3 days', desc: 'Strong urges, especially during typical play times' },
-          { time: '1 week', desc: 'Boredom, difficulty finding alternative activities' },
-          { time: '2 weeks', desc: 'Urges decrease, other interests resurface' },
-          { time: '1 month', desc: 'Gaming can be enjoyed in moderation without compulsion' },
-        ],
+        loopMapFront: 'caffeine',
       },
-      shopping: {
-        tagline: 'The cart is always ready',
-        mechanism: `Online shopping removes every friction point between impulse and purchase. One-click buying, saved payment info, and personalized recommendations create a frictionless path to dopamine. The anticipation of a package often delivers more pleasure than the item itself.`,
-        tactics: [
-          'One-click purchasing eliminates pause for reflection',
-          'Anticipation of delivery extends dopamine hit',
-          'Personalized recommendations exploit browsing data',
-          'Flash sales create artificial urgency',
-          'Free returns reduce perceived risk',
+      {
+        id: 'risk-runner',
+        name: 'Risk Runner',
+        icon: '🎲',
+        tagline: 'The thrill is the product. Loss is just the cost of playing.',
+        description: 'You're drawn to variable outcomes — gambling, day trading, speculation, high-stakes decisions. The near-miss activates your reward system almost as powerfully as the win. Skill and chance blur together. You may frame it as strategy, but the neurological signature is identical to slot machine behavior.',
+        fronts: ['gambling'],
+        matchLogic: scores => (scores.gambling || 0) >= 40,
+        interventions: [
+          { trigger: 'Near-miss or "almost had it" outcome', change: 'Near-misses are engineered. Document them. Seeing the pattern destroys the illusion of almost-winning.' },
+          { trigger: 'Financial loss followed by urge to recover it', change: 'Chasing is the most reliable signal that control is gone. Define a hard stop loss before any session.' },
+          { trigger: 'Rationalization that this time is different', change: 'Write out the rationalization. Reading it back breaks the spell faster than willpower.' },
+          { trigger: 'Excitement spike when checking prices or odds', change: 'That spike is the product being sold. Automate investments and remove the action loop.' },
         ],
-        withdrawal: [
-          { time: '1-3 days', desc: 'Urge to browse, rationalized "research"' },
-          { time: '1 week', desc: 'Realization of how much was impulse-driven' },
-          { time: '2 weeks', desc: 'Reduced urge to shop for entertainment' },
-          { time: '1 month', desc: 'Purchasing decisions become intentional' },
-        ],
+        loopMapFront: 'gambling',
       },
-      caffeine: {
-        tagline: 'Borrowing energy at compound interest',
-        mechanism: `Caffeine blocks adenosine receptors, preventing your brain from recognizing fatigue. Over time, your brain grows more adenosine receptors to compensate, requiring more caffeine to achieve the same effect. You're not gaining energy—you're borrowing it, and the debt compounds.`,
-        tactics: [
-          'Adenosine receptor blocking masks fatigue',
-          'Tolerance builds requiring increased doses',
-          'Withdrawal headaches punish skipped doses',
-          'Social rituals embed caffeine into identity',
-          'Ubiquitous availability in every workplace',
+      {
+        id: 'baseline-stable',
+        name: 'Baseline Stable',
+        icon: '🧱',
+        tagline: 'Systems are holding. Maintain the architecture.',
+        description: 'Your current scores don't indicate active loop dominance across major fronts. That's not an accident — it's the result of structural constraints, good defaults, or deliberate friction. The work now is maintenance: auditing for creep, identifying weak points before they activate, and keeping the environment clean.',
+        fronts: [],
+        matchLogic: scores => {
+          const vals = Object.values(scores);
+          if (vals.length === 0) return true;
+          return vals.every(v => v < 40);
+        },
+        interventions: [
+          { trigger: 'Complacency during low-stress periods', change: 'Run a monthly audit. Baseline stability is a system output, not a character trait.' },
+          { trigger: 'Stress period approaching (deadlines, transitions)', change: 'Pre-load friction on your highest-risk front before the stress hits, not after.' },
+          { trigger: 'One front starting to creep', change: 'Address it at 20 — not at 60. Early intervention costs almost nothing.' },
+          { trigger: 'Social pressure to engage with a loop', change: 'Your defaults are your defense. Don't renegotiate them under social pressure.' },
         ],
-        withdrawal: [
-          { time: '12-24 hrs', desc: 'Headaches begin, fatigue sets in' },
-          { time: '1-3 days', desc: 'Peak withdrawal: headaches, irritability, brain fog' },
-          { time: '1 week', desc: 'Symptoms subside, natural energy returns' },
-          { time: '2 weeks', desc: 'Baseline energy restored without stimulants' },
-        ],
+        loopMapFront: 'social',
       },
-      porn: {
-        tagline: 'Supernormal stimuli rewiring your arousal',
-        mechanism: `Pornography delivers supernormal stimuli—sexual imagery more intense than anything in nature. The brain adapts by downregulating dopamine receptors, requiring more extreme content to achieve arousal. This can lead to dissatisfaction with real partners and escalation to more extreme material.`,
-        tactics: [
-          'Endless novelty through infinite content',
-          'Escalation as tolerance builds',
-          'Tube sites engineered for binge sessions',
-          'Private consumption removes social friction',
-          'Taboo and shame create secrecy loops',
-        ],
-        withdrawal: [
-          { time: '1-2 weeks', desc: 'Strong urges, may experience "flatline"' },
-          { time: '1 month', desc: 'Brain begins to recalibrate sensitivity' },
-          { time: '2-3 months', desc: 'Natural arousal response strengthens' },
-          { time: '6+ months', desc: 'Full receptor recovery for heavy users' },
-        ],
-        declassified: true,
-      },
-      gambling: {
-        tagline: 'The house always wins, especially your brain',
-        mechanism: `Gambling exploits the most powerful reward schedule known: variable ratio reinforcement. Near-misses activate reward circuits almost as much as wins. Day trading and crypto speculation use identical psychological mechanisms. The brain can't distinguish between skill and chance.`,
-        tactics: [
-          'Variable ratio reinforcement (random wins)',
-          'Near-misses coded as "almost winning"',
-          'Losses framed as "almost there"',
-          'Fast feedback loops maximize dopamine hits',
-          'Skill illusion in games of chance',
-        ],
-        withdrawal: [
-          { time: '1-2 weeks', desc: 'Intense urges, especially around triggers' },
-          { time: '1 month', desc: 'Financial reality sets in, urges decrease' },
-          { time: '3 months', desc: 'Healthier relationship with risk' },
-          { time: '6+ months', desc: 'Can engage with finance without gambling behavior' },
-        ],
-        declassified: true,
-      },
-    };
-    
-    // ==========================================
-    // Initialize
-    // ==========================================
-    function init() {
-      renderProfiles();
-      updateCTA();
+    ];
+
+    // ── Match user to archetypes ───────────────────────────────
+    function matchArchetypes(scores) {
+      const matched = ARCHETYPES.filter(a => a.matchLogic(scores));
+      // Always return at least baseline-stable
+      if (matched.length === 0) return [ARCHETYPES.find(a => a.id === 'baseline-stable')];
+      // Don't show baseline-stable if other archetypes matched
+      return matched.filter(a => a.id !== 'baseline-stable');
     }
-    
-    function renderProfiles() {
-      const grid = document.getElementById('profileGrid');
+
+    // ── Render ─────────────────────────────────────────────────
+    function renderArchetypes() {
+      const grid = document.getElementById('archetypeGrid');
       const scores = DW.audit.isComplete() ? DW.audit.getScores() : {};
-      
-      // Sort by user's scores (highest first), or default order
-      let frontIds = Object.keys(DW.FRONTS);
-      if (Object.keys(scores).length > 0) {
-        frontIds.sort((a, b) => (scores[b] || 0) - (scores[a] || 0));
+      const hasScores = Object.keys(scores).length > 0;
+      const matched = hasScores ? matchArchetypes(scores) : ARCHETYPES;
+
+      // If we have scores, show match banner
+      if (hasScores && matched.length > 0 && matched[0].id !== 'baseline-stable') {
+        const matchBanner = document.getElementById('archetypeMatch');
+        matchBanner.style.display = 'block';
+        matchBanner.style.cssText = 'display:block; background:var(--color-bg-card); border:1px solid var(--color-accent); border-radius:8px; padding:1.5rem; margin-bottom:2rem;';
+        matchBanner.innerHTML = `
+          <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-accent);margin-bottom:0.5rem;">Your Pattern Match</div>
+          <div style="font-size:1.125rem;font-weight:600;margin-bottom:0.25rem;">${matched.map(a => a.icon + ' ' + a.name).join(' · ')}</div>
+          <div style="font-size:0.875rem;color:var(--color-text-secondary);">Based on your assessment scores. Scroll down to see your system templates.</div>
+        `;
       }
-      
-      grid.innerHTML = frontIds
-        .filter(id => !DW.FRONTS[id].declassified) // Filter out declassified for main page
-        .map(id => renderProfileCard(id, scores[id]))
-        .join('');
-    }
-    
-    function renderProfileCard(frontId, userScore) {
-      const front = DW.FRONTS[frontId];
-      const dossier = DOSSIERS[frontId];
-      if (!front || !dossier) return '';
-      
-      const hasScore = userScore !== undefined;
-      const threat = hasScore ? DW.audit.getThreatLevel(userScore) : null;
-      const scoreDisplay = hasScore ? userScore : '--';
-      const scoreClass = hasScore ? threat.color : 'unknown';
-      
-      const tacticsHTML = dossier.tactics
-        .map(t => `<li>${t}</li>`)
-        .join('');
-      
-      const withdrawalHTML = dossier.withdrawal
-        .map(w => `
-          <div class="withdrawal-item">
-            <span class="withdrawal-item__time">${w.time}</span>
-            <span class="withdrawal-item__desc">${w.desc}</span>
+
+      grid.innerHTML = ARCHETYPES.map((archetype, i) => {
+        const isMatch = hasScores && matched.find(a => a.id === archetype.id);
+        const interventionsHTML = archetype.interventions.map(iv => `
+          <div class="archetype-intervention">
+            <div class="archetype-intervention__trigger">
+              <span class="archetype-intervention__label">Trigger</span>
+              ${iv.trigger}
+            </div>
+            <div class="archetype-intervention__arrow">→</div>
+            <div class="archetype-intervention__change">
+              <span class="archetype-intervention__label">System change</span>
+              ${iv.change}
+            </div>
           </div>
         `).join('');
-      
-      return `
-        <article class="profile-card">
-          <div class="profile-card__header">
-            <div class="profile-card__icon">${front.icon}</div>
-            <div class="profile-card__title-group">
-              <h2 class="profile-card__name">${front.name}</h2>
-              <p class="profile-card__tagline">${dossier.tagline}</p>
+
+        return `
+          <article class="archetype-card ${isMatch ? 'archetype-card--match' : ''}">
+            <div class="archetype-card__header">
+              <div class="archetype-card__icon">${archetype.icon}</div>
+              <div class="archetype-card__title-group">
+                <div class="archetype-card__meta">
+                  ${isMatch ? '<span class="archetype-match-badge">Your Pattern</span>' : ''}
+                </div>
+                <h2 class="archetype-card__name">${archetype.name}</h2>
+                <p class="archetype-card__tagline">${archetype.tagline}</p>
+              </div>
             </div>
-            <div class="profile-card__threat">
-              <div class="profile-card__threat-label">Your Threat</div>
-              <div class="profile-card__threat-score ${scoreClass}">${scoreDisplay}</div>
+            <div class="archetype-card__body">
+              <p class="archetype-card__description">${archetype.description}</p>
+              <div class="archetype-card__section-label">System Templates</div>
+              <div class="archetype-interventions">${interventionsHTML}</div>
+              <div class="archetype-card__actions">
+                <a href="/loop-map/?front=${archetype.loopMapFront}&label=${encodeURIComponent(archetype.name + ' loop')}" class="btn btn--secondary" style="font-size:0.8125rem;padding:0.5rem 1rem;">
+                  Map this as a loop →
+                </a>
+              </div>
             </div>
-          </div>
-          <div class="profile-card__body">
-            <div class="profile-section">
-              <h3 class="profile-section__title">How It Works</h3>
-              <p class="profile-section__content">${dossier.mechanism}</p>
-            </div>
-            <div class="profile-section">
-              <h3 class="profile-section__title">Tactics Used Against You</h3>
-              <ul class="profile-section__list">${tacticsHTML}</ul>
-            </div>
-            <div class="profile-section">
-              <h3 class="profile-section__title">Withdrawal Timeline</h3>
-              <div class="withdrawal-timeline">${withdrawalHTML}</div>
-            </div>
-          </div>
-        </article>
-      `;
+          </article>
+        `;
+      }).join('');
     }
-    
+
     function updateCTA() {
       const cta = document.getElementById('profilesCta');
       if (DW.audit.isComplete()) {
         cta.innerHTML = `
-          <h2 class="profiles-cta__title">Your War Room is active</h2>
-          <p class="profiles-cta__text">See your personalized threat levels and battle plans.</p>
+          <h2 class="profiles-cta__title">Field Report is active</h2>
+          <p class="profiles-cta__text">See your full control breakdown and tactical interventions.</p>
           <a href="/threat-assessment/war-room/" class="btn btn--primary btn--large">Show Me Tactics</a>
         `;
       }
     }
-    
-    // Init
-    init();
+
+    renderArchetypes();
+    updateCTA();
   </script>
 </body>
 </html>

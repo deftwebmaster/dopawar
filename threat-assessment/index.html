@@ -474,7 +474,7 @@
         <span id="threatLabel">CALCULATING</span>
       </div>
       <p class="results-teaser__label mt-lg" id="threatMessage"></p>
-      <p class="results-teaser__loop-cta mt-md">
+      <p class="results-teaser__loop-cta mt-md" id="loopCta" style="display:none;">
         Want to break this cycle at its architecture?
         <a href="/loop-map/" id="loopMapLink" style="color:var(--color-accent); text-decoration:none; font-weight:500;">Map your #1 front as a loop →</a>
       </p>
@@ -748,6 +748,21 @@
       };
       
       threatMessage.textContent = messages[threat.key];
+
+      // Build Loop Ladder link — prefill with #1 front
+      const allScores = Object.entries(finalScores).sort(([,a],[,b]) => b - a);
+      if (allScores.length > 0) {
+        const topFront = allScores[0][0];
+        const frontData = DW.FRONTS[topFront];
+        const loopLink = document.getElementById('loopMapLink');
+        const loopCta  = document.getElementById('loopCta');
+        if (loopLink && frontData) {
+          loopLink.href = '/loop-map/?front=' + encodeURIComponent(topFront) +
+            '&label=' + encodeURIComponent(frontData.name);
+          loopLink.textContent = 'Map your ' + frontData.name + ' loop →';
+          loopCta.style.display = 'block';
+        }
+      }
     }
     
     // ==========================================

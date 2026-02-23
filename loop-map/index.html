@@ -1002,6 +1002,48 @@
   }
   loadSavedLoop();
 
+  // ── URL prefill (from Threat Assessment Loop Ladder) ──────────────────────
+  function applyUrlPrefill() {
+    const params = new URLSearchParams(window.location.search);
+    const front = params.get('front');
+    const label = params.get('label');
+    if (!front && !label) return;
+
+    // Map front id to a sensible loop label and trigger checkbox
+    const frontTriggerMap = {
+      social:   { trigger: 't-availability', label: label || 'Social media scrolling' },
+      sugar:    { trigger: 't-boredom',      label: label || 'Sugar / junk food craving' },
+      porn:     { trigger: 't-time',         label: label || 'Pornography use' },
+      news:     { trigger: 't-emotional',    label: label || 'News doomscrolling' },
+      gaming:   { trigger: 't-boredom',      label: label || 'Gaming session' },
+      shopping: { trigger: 't-availability', label: label || 'Impulse shopping' },
+      caffeine: { trigger: 't-fatigue',      label: label || 'Caffeine use' },
+      gambling: { trigger: 't-emotional',    label: label || 'Gambling / trading' },
+    };
+
+    const mapping = frontTriggerMap[front];
+    if (!mapping) return;
+
+    // Pre-fill loop label
+    const loopLabelEl = document.getElementById('loopLabel');
+    if (loopLabelEl && !loopLabelEl.value) {
+      loopLabelEl.value = mapping.label;
+    }
+
+    // Pre-check trigger
+    const triggerEl = document.getElementById(mapping.trigger);
+    if (triggerEl && !triggerEl.checked) {
+      triggerEl.checked = true;
+      limitTriggers();
+    }
+
+    // Scroll form into view and flash the label field
+    loopLabelEl.focus();
+    loopLabelEl.style.borderColor = 'var(--accent)';
+    setTimeout(() => { loopLabelEl.style.borderColor = ''; }, 1800);
+  }
+  applyUrlPrefill();
+
   // ── Trigger limiter (max 2) ──────────────────────────────────────────────────
   function limitTriggers() {
     const all = document.querySelectorAll('input[name="trigger"]');
