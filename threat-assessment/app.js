@@ -349,7 +349,7 @@ const DopamineWar = {
     // Redirect if audit not complete
     requireAudit() {
       if (!DopamineWar.audit.isComplete()) {
-        window.location.href = '/';
+        window.location.href = '/threat-assessment/';
         return false;
       }
       return true;

@@ -1,753 +1,836 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- * lone wolf, silent teeth | Matt Livingston -->
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Dopamine War — Reclaim Your Brain</title>
-  <meta name="description" content="Your attention is under attack. Audit your dopamine triggers, track your battles, and take back control of your reward system.">
-  
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://dopaminewar.com">
-  <meta property="og:title" content="Dopamine War — Reclaim Your Brain">
-  <meta property="og:description" content="Your attention is under attack. Audit your dopamine triggers, track your battles, and take back control.">
-  <meta property="og:image" content="https://dopaminewar.com/card.png">
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Dopamine War — Reclaim Your Brain">
-  <meta name="twitter:description" content="Your attention is under attack. Audit your dopamine triggers, track your battles, and take back control.">
-  <meta name="twitter:image" content="https://dopaminewar.com/card.png">
-  
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  
-  <style>
-    /* Landing-specific styles */
-    .landing {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .hero {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      padding: var(--space-2xl) 0;
-    }
-    
-    .hero__content {
-      max-width: 600px;
-    }
-    
-    .hero__badge {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-sm);
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--color-critical);
-      background: var(--color-critical-glow);
-      border: 1px solid var(--color-critical);
-      padding: 0.375rem 0.75rem;
-      border-radius: var(--radius-sm);
-      margin-bottom: var(--space-lg);
-    }
-    
-    .hero__badge::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--color-critical);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    
-    .hero__title {
-      font-size: clamp(2.5rem, 8vw, 4rem);
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: var(--space-lg);
-    }
-    
-    .hero__title span {
-      color: var(--color-critical);
-    }
-    
-    .hero__description {
-      font-size: 1.125rem;
-      color: var(--color-text-secondary);
-      margin-bottom: var(--space-xl);
-      line-height: 1.7;
-    }
-    
-    .hero__cta {
-      display: flex;
-      gap: var(--space-md);
-      flex-wrap: wrap;
-    }
-    
-    .hero__stats {
-      display: flex;
-      gap: var(--space-xl);
-      margin-top: var(--space-2xl);
-      padding-top: var(--space-xl);
-      border-top: 1px solid var(--color-border);
-    }
-    
-    .stat {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .stat__value {
-      font-family: var(--font-mono);
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--color-text);
-    }
-    
-    .stat__label {
-      font-size: 0.8125rem;
-      color: var(--color-text-muted);
-    }
-    
-    /* Audit styles */
-    .audit {
-      display: none;
-      min-height: 100vh;
-      padding: var(--space-xl) 0;
-    }
-    
-    .audit.active {
-      display: block;
-    }
-    
-    .audit__header {
-      text-align: center;
-      margin-bottom: var(--space-2xl);
-    }
-    
-    .audit__progress {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-md);
-      margin-bottom: var(--space-lg);
-    }
-    
-    .audit__progress-bar {
-      width: 200px;
-      height: 4px;
-      background: var(--color-border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    
-    .audit__progress-fill {
-      height: 100%;
-      background: var(--color-accent);
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-    
-    .audit__progress-text {
-      font-family: var(--font-mono);
-      font-size: 0.8125rem;
-      color: var(--color-text-muted);
-    }
-    
-    .audit__title {
-      font-size: 1.25rem;
-      margin-bottom: var(--space-sm);
-    }
-    
-    .audit__subtitle {
-      color: var(--color-text-muted);
-      font-size: 0.9375rem;
-    }
-    
-    .question {
-      max-width: 500px;
-      margin: 0 auto;
-      animation: slideUp 0.3s ease;
-    }
-    
-    .question__text {
-      font-size: 1.25rem;
-      font-weight: 500;
-      margin-bottom: var(--space-lg);
-      text-align: center;
-    }
-    
-    .question__front {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-sm);
-      font-size: 0.875rem;
-      color: var(--color-text-muted);
-      margin-bottom: var(--space-md);
-    }
-    
-    .question__options {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-sm);
-    }
-    
-    .question__option {
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-      padding: var(--space-md) var(--space-lg);
-      background: var(--color-bg-elevated);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-    
-    .question__option:hover {
-      border-color: var(--color-border-hover);
-      background: var(--color-bg-card);
-    }
-    
-    .question__option.selected {
-      border-color: var(--color-accent);
-      background: var(--color-accent-muted);
-    }
-    
-    .question__option-indicator {
-      width: 18px;
-      height: 18px;
-      border: 2px solid var(--color-border);
-      border-radius: 50%;
-      flex-shrink: 0;
-      transition: all var(--transition-fast);
-    }
-    
-    .question__option.selected .question__option-indicator {
-      border-color: var(--color-accent);
-      background: var(--color-accent);
-      box-shadow: inset 0 0 0 3px var(--color-bg-card);
-    }
-    
-    .question__option-text {
-      font-size: 0.9375rem;
-    }
-    
-    .audit__nav {
-      display: flex;
-      justify-content: center;
-      gap: var(--space-md);
-      margin-top: var(--space-xl);
-    }
-    
-    /* Results teaser */
-    .results-teaser {
-      display: none;
-      text-align: center;
-      padding: var(--space-2xl) 0;
-      animation: slideUp 0.4s ease;
-    }
-    
-    .results-teaser.active {
-      display: block;
-    }
-    
-    .results-teaser__score {
-      font-family: var(--font-mono);
-      font-size: 5rem;
-      font-weight: 700;
-      line-height: 1;
-      margin-bottom: var(--space-md);
-    }
-    
-    .results-teaser__score.critical { color: var(--color-critical); }
-    .results-teaser__score.high { color: var(--color-high); }
-    .results-teaser__score.moderate { color: var(--color-moderate); }
-    .results-teaser__score.low { color: var(--color-low); }
-    .results-teaser__score.secure { color: var(--color-secure); }
-    
-    .results-teaser__label {
-      font-family: var(--font-mono);
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: var(--space-lg);
-    }
-    
-    .results-teaser__message {
-      font-size: 1.125rem;
-      color: var(--color-text-secondary);
-      max-width: 400px;
-      margin: 0 auto var(--space-xl);
-    }
-    
-    /* Return visitor */
-    .return-banner {
-      display: none;
-      background: var(--color-bg-card);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-lg);
-      margin-bottom: var(--space-xl);
-    }
-    
-    .return-banner.active {
-      display: block;
-    }
-    
-    .return-banner__inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-lg);
-      flex-wrap: wrap;
-    }
-    
-    .return-banner__content h3 {
-      font-size: 1rem;
-      margin-bottom: 0.25rem;
-    }
-    
-    .return-banner__content p {
-      font-size: 0.875rem;
-      color: var(--color-text-muted);
-    }
-    
-    .return-banner__actions {
-      display: flex;
-      gap: var(--space-sm);
-    }
-    
-    @media (max-width: 640px) {
-      .hero__stats {
-        flex-direction: column;
-        gap: var(--space-lg);
-      }
-      
-      .hero__cta {
-        flex-direction: column;
-      }
-      
-      .hero__cta .btn {
-        width: 100%;
-      }
-      
-      .return-banner__inner {
-        flex-direction: column;
-        text-align: center;
-      }
-      
-      .return-banner__actions {
-        width: 100%;
-        flex-direction: column;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DopamineWar — Strategic Systems Lab</title>
+<meta name="description" content="You are not broken. The environment is engineered. Design counter-systems.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08080a;
+    --surface: #0f0f12;
+    --surface-2: #16161a;
+    --border: #1e1e24;
+    --border-mid: #2a2a32;
+    --border-active: #3a3a45;
+    --text-primary: #eaeaee;
+    --text-secondary: #78788a;
+    --text-muted: #42424e;
+    --accent: #c8f542;
+    --accent-dim: rgba(200,245,66,0.08);
+    --accent-border: rgba(200,245,66,0.25);
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --display: 'Bebas Neue', sans-serif;
+    --radius: 3px;
+    --tr: 160ms ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise grain overlay ──────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.022;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .wrapper {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Nav ──────────────────────────────────────────────────────── */
+  .site-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,10,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .nav-brand {
+    font-family: var(--display);
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .nav-brand em { color: var(--accent); font-style: normal; }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--tr);
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #000 !important;
+    background: var(--accent);
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    transition: opacity var(--tr) !important;
+  }
+  .nav-cta:hover { opacity: 0.85 !important; color: #000 !important; }
+
+  @media (max-width: 600px) {
+    .nav-links { gap: 16px; }
+    .nav-links li:not(:last-child):not(:nth-last-child(2)) { display: none; }
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────────── */
+  .hero {
+    padding: 140px 0 100px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  /* Vertical scan line accent */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 18%;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--border-mid) 30%, var(--border-mid) 70%, transparent);
+    opacity: 0.5;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(72px, 12vw, 148px);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+    margin-bottom: 40px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero-title .line-accent { color: var(--accent); }
+
+  .hero-body {
+    max-width: 520px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-manifesto {
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 36px;
+  }
+  .hero-manifesto strong { color: var(--text-primary); font-weight: 500; }
+
+  .hero-tenets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .tenet {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tenet::before {
+    content: '→';
+    color: var(--accent);
+    font-size: 11px;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity var(--tr), transform var(--tr);
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-ghost {
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-mid);
+    padding-bottom: 2px;
+    transition: color var(--tr), border-color var(--tr);
+  }
+  .btn-ghost:hover { color: var(--text-primary); border-color: var(--border-active); }
+
+  /* ── Section headers ──────────────────────────────────────────── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Tools grid ───────────────────────────────────────────────── */
+  .tools-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .tool-card {
+    background: var(--surface);
+    padding: 28px 28px 24px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    transition: background var(--tr);
+    overflow: hidden;
+  }
+  .tool-card:hover { background: var(--surface-2); }
+  .tool-card.coming { pointer-events: none; opacity: 0.5; }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 100%;
+    background: transparent;
+    transition: background var(--tr);
+  }
+  .tool-card:hover::before { background: var(--accent); }
+
+  .tool-index {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tool-status {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+  .tool-status.live {
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+  }
+  .tool-status.coming {
+    color: var(--text-muted);
+    border: 1px solid var(--border-mid);
+  }
+
+  .tool-name {
+    font-family: var(--display);
+    font-size: 28px;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .tool-route {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 14px;
+  }
+  .tool-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .tool-arrow {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color var(--tr), gap var(--tr);
+  }
+  .tool-card:hover .tool-arrow { color: var(--accent); gap: 12px; }
+
+  /* ── Satellites ───────────────────────────────────────────────── */
+  .satellites-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .satellites-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 700px) { .satellites-grid { grid-template-columns: 1fr; } }
+
+  .satellite-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: border-color var(--tr), background var(--tr);
+  }
+  .satellite-card:hover {
+    border-color: var(--border-active);
+    background: var(--surface-2);
+  }
+  .satellite-domain {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .satellite-name {
+    font-family: var(--display);
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+  .satellite-role {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .satellite-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  /* ── Ecosystem diagram ────────────────────────────────────────── */
+  .ecosystem-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ecosystem-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 480px;
+  }
+  .eco-node {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .eco-node:last-child { border-bottom: none; }
+  .eco-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+  .eco-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border-mid);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .eco-node.active .eco-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(200,245,66,0.4);
+  }
+  .eco-line {
+    width: 1px;
+    flex: 1;
+    min-height: 20px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+  .eco-body {}
+  .eco-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .eco-node.active .eco-label { color: var(--accent); }
+  .eco-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+  }
+  .eco-node.active .eco-title { color: var(--text-primary); }
+  .eco-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* ── Philosophy strip ─────────────────────────────────────────── */
+  .philosophy-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .philosophy-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  @media (max-width: 640px) { .philosophy-inner { grid-template-columns: 1fr; gap: 40px; } }
+
+  .philosophy-quote {
+    font-family: var(--display);
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    color: var(--text-primary);
+  }
+  .philosophy-quote em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .philosophy-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+  .philosophy-text + .philosophy-text { margin-top: -4px; }
+
+  /* ── Footer ───────────────────────────────────────────────────── */
+  .site-footer {
+    padding: 40px 0;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-brand {
+    font-family: var(--display);
+    font-size: 18px;
+    letter-spacing: 0.03em;
+    color: var(--text-muted);
+  }
+  .footer-brand em { color: var(--accent); font-style: normal; }
+  .footer-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--tr);
+  }
+  .footer-links a:hover { color: var(--text-secondary); }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    width: 100%;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ───────────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger utility */
+  .reveal-d1 { transition-delay: 0.05s; }
+  .reveal-d2 { transition-delay: 0.1s; }
+  .reveal-d3 { transition-delay: 0.15s; }
+  .reveal-d4 { transition-delay: 0.2s; }
+  .reveal-d5 { transition-delay: 0.25s; }
+</style>
 </head>
 <body>
-  <!-- Landing Page -->
-  <div class="landing" id="landing">
-    <header class="header">
-      <div class="container header__inner">
-        <a href="/" class="header__logo">DOPAMINE WAR</a>
-        <nav class="header__nav">
-          <a href="/war-room/" class="header__link">War Room</a>
-          <a href="/profiles/" class="header__link">Enemy Intel</a>
-        </nav>
-      </div>
-    </header>
-    
-    <section class="hero">
-      <div class="container">
-        <!-- Return visitor banner -->
-        <div class="return-banner" id="returnBanner">
-          <div class="return-banner__inner">
-            <div class="return-banner__content">
-              <h3>Welcome back, soldier.</h3>
-              <p>Your War Room is still active. Resume operations or retake the audit.</p>
-            </div>
-            <div class="return-banner__actions">
-              <a href="/war-room/" class="btn btn--primary">Enter War Room</a>
-              <button class="btn btn--secondary" id="retakeAudit">Retake Audit</button>
-            </div>
-          </div>
-        </div>
-        
-        <div class="hero__content">
-          <div class="hero__badge">
-            <span>Threat Assessment Available</span>
-          </div>
-          
-          <h1 class="hero__title">Your brain is <span>under attack.</span></h1>
-          
-          <p class="hero__description">
-            Every app, every feed, every notification is engineered to hijack your reward system. 
-            You're not weak. You're outgunned. It's time to fight back.
-          </p>
-          
-          <div class="hero__cta">
-            <button class="btn btn--primary btn--large" id="startAudit">
-              Begin Threat Assessment
-            </button>
-            <a href="/profiles/" class="btn btn--secondary btn--large">
-              Know Your Enemy
-            </a>
-          </div>
-          
-          <div class="hero__stats">
-            <div class="stat">
-              <span class="stat__value">8</span>
-              <span class="stat__label">Active Fronts Tracked</span>
-            </div>
-            <div class="stat">
-              <span class="stat__value">100%</span>
-              <span class="stat__label">Client-Side (No Data Sent)</span>
-            </div>
-            <div class="stat">
-              <span class="stat__value">0</span>
-              <span class="stat__label">Accounts Required</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <footer class="footer">
-      <div class="container">
-        <p class="footer__text">No tracking. No accounts. Your data stays on your device.</p>
-      </div>
-    </footer>
+
+<!-- ── Nav ──────────────────────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="wrapper nav-inner">
+    <a class="nav-brand" href="/"><em>Dopamine</em>War</a>
+    <ul class="nav-links">
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#ecosystem">Ecosystem</a></li>
+      <li><a href="#philosophy">Philosophy</a></li>
+      <li><a href="/loop-map/" class="nav-cta">Start Here →</a></li>
+    </ul>
   </div>
-  
-  <!-- Audit Flow -->
-  <div class="audit" id="audit">
-    <div class="container container--narrow">
-      <div class="audit__header">
-        <div class="audit__progress">
-          <div class="audit__progress-bar">
-            <div class="audit__progress-fill" id="progressFill"></div>
-          </div>
-          <span class="audit__progress-text" id="progressText">1 / 8</span>
-        </div>
-        <h1 class="audit__title">Threat Assessment</h1>
-        <p class="audit__subtitle">Answer honestly. This is recon, not judgment.</p>
-      </div>
-      
-      <div class="question" id="questionContainer">
-        <!-- Questions injected here -->
-      </div>
-      
-      <div class="audit__nav" id="auditNav">
-        <button class="btn btn--secondary" id="prevBtn" disabled>Back</button>
-        <button class="btn btn--primary" id="nextBtn" disabled>Next</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Results Teaser -->
-  <div class="results-teaser" id="results">
-    <div class="container container--narrow">
-      <div class="results-teaser__score" id="scoreDisplay">--</div>
-      <div class="threat-badge" id="threatBadge">
-        <span id="threatLabel">CALCULATING</span>
-      </div>
-      <p class="results-teaser__label mt-lg" id="threatMessage"></p>
-      <p class="results-teaser__message">
-        Your War Room is ready. See your full threat breakdown, battle plans, and start tracking your daily operations.
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="wrapper">
+    <div class="hero-eyebrow">Strategic Systems Lab</div>
+    <h1 class="hero-title">
+      Dopamine<br>
+      <span class="line-accent">War.</span>
+    </h1>
+    <div class="hero-body">
+      <p class="hero-manifesto">
+        You are <strong>not broken</strong>. The environment is engineered. Every loop you're stuck in was designed — by someone else, for someone else's profit. <strong>Design counter-systems.</strong>
       </p>
-      <a href="/war-room/" class="btn btn--primary btn--large">Enter War Room</a>
+      <div class="hero-tenets">
+        <div class="tenet">Not war against self. War against engineered drift.</div>
+        <div class="tenet">Architect your behavior. Don't just resist it.</div>
+        <div class="tenet">Systems over willpower. Always.</div>
+      </div>
+      <div class="hero-cta-row">
+        <a href="/loop-map/" class="btn-primary">Map Your Loop →</a>
+        <a href="#tools" class="btn-ghost">See all tools</a>
+      </div>
     </div>
   </div>
-  
-  <script src="app.js"></script>
-  <script>
-    // ==========================================
-    // Audit Questions — One per front, comprehensive
-    // ==========================================
-    const QUESTIONS = [
-      {
-        front: 'social',
-        text: 'How would you describe your social media use?',
-        options: [
-          { label: 'I rarely use it or don\'t have accounts', value: 0 },
-          { label: 'I check it a few times a day with limits', value: 25 },
-          { label: 'I check it often, sometimes losing track of time', value: 50 },
-          { label: 'I check constantly and feel anxious without it', value: 75 },
-          { label: 'It\'s the first and last thing I do daily, I can\'t stop', value: 100 },
-        ]
-      },
-      {
-        front: 'sugar',
-        text: 'How would you describe your relationship with sugar and junk food?',
-        options: [
-          { label: 'I rarely eat it, no cravings', value: 0 },
-          { label: 'Occasional treat, I can take it or leave it', value: 25 },
-          { label: 'I eat it daily but feel in control', value: 50 },
-          { label: 'I crave it often and use it to cope with stress', value: 75 },
-          { label: 'I\'m constantly craving it and can\'t resist', value: 100 },
-        ]
-      },
-      {
-        front: 'news',
-        text: 'How would you describe your news and current events consumption?',
-        options: [
-          { label: 'I stay informed briefly, it doesn\'t affect my mood', value: 0 },
-          { label: 'I check daily but set limits', value: 25 },
-          { label: 'I spend 1-2 hours daily, sometimes feel anxious after', value: 50 },
-          { label: 'I doomscroll often and it affects my mood', value: 75 },
-          { label: 'It\'s constant, I feel anxious and can\'t look away', value: 100 },
-        ]
-      },
-      {
-        front: 'gaming',
-        text: 'How would you describe your gaming habits?',
-        options: [
-          { label: 'I don\'t game or rarely do', value: 0 },
-          { label: 'I play occasionally, easy to stop', value: 25 },
-          { label: 'I play regularly, sometimes longer than planned', value: 50 },
-          { label: 'I play daily, often skip other activities for it', value: 75 },
-          { label: 'Gaming dominates my free time, hard to stop', value: 100 },
-        ]
-      },
-      {
-        front: 'shopping',
-        text: 'How would you describe your online shopping behavior?',
-        options: [
-          { label: 'I only buy what I need, rarely browse', value: 0 },
-          { label: 'I occasionally impulse buy but it\'s minor', value: 25 },
-          { label: 'I browse often and buy things I don\'t need weekly', value: 50 },
-          { label: 'I get a rush from buying, packages arrive constantly', value: 75 },
-          { label: 'Shopping is a main source of pleasure, I can\'t stop', value: 100 },
-        ]
-      },
-      {
-        front: 'caffeine',
-        text: 'How would you describe your caffeine consumption?',
-        options: [
-          { label: 'None or occasional, no dependency', value: 0 },
-          { label: '1-2 cups daily, I could quit if needed', value: 25 },
-          { label: '3-4 cups daily, I get headaches without it', value: 50 },
-          { label: '5+ cups daily, I\'m useless without it', value: 75 },
-          { label: 'I\'m constantly caffeinated and need it to function', value: 100 },
-        ]
-      },
-      {
-        front: 'porn',
-        text: 'How would you describe your pornography use?',
-        options: [
-          { label: 'I don\'t use it or very rarely', value: 0 },
-          { label: 'Occasional use, doesn\'t affect my life', value: 25 },
-          { label: 'Regular use, sometimes more than I\'d like', value: 50 },
-          { label: 'Frequent use, have noticed I need more intensity', value: 75 },
-          { label: 'Daily use, it\'s affecting my relationships or habits', value: 100 },
-        ]
-      },
-      {
-        front: 'gambling',
-        text: 'Do you gamble, day-trade, or make speculative bets?',
-        options: [
-          { label: 'No, or very rarely with small amounts', value: 0 },
-          { label: 'Occasionally, always within strict limits', value: 25 },
-          { label: 'Regularly, sometimes more than I planned', value: 50 },
-          { label: 'Often, I\'ve chased losses or hidden it from others', value: 75 },
-          { label: 'Frequently, it\'s causing financial or relationship problems', value: 100 },
-        ]
-      },
-    ];
-    
-    // ==========================================
-    // State
-    // ==========================================
-    let currentQuestion = 0;
-    let answers = {};
-    
-    // ==========================================
-    // DOM Elements
-    // ==========================================
-    const landing = document.getElementById('landing');
-    const audit = document.getElementById('audit');
-    const results = document.getElementById('results');
-    const returnBanner = document.getElementById('returnBanner');
-    const startBtn = document.getElementById('startAudit');
-    const retakeBtn = document.getElementById('retakeAudit');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const questionContainer = document.getElementById('questionContainer');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    
-    // ==========================================
-    // Initialize
-    // ==========================================
-    function init() {
-      // Check if returning user
-      if (DW.audit.isComplete()) {
-        returnBanner.classList.add('active');
-      }
-      
-      // Event listeners
-      startBtn.addEventListener('click', startAudit);
-      retakeBtn.addEventListener('click', () => {
-        DW.audit.reset();
-        startAudit();
-      });
-      prevBtn.addEventListener('click', prevQuestion);
-      nextBtn.addEventListener('click', nextQuestion);
-    }
-    
-    // ==========================================
-    // Audit Flow
-    // ==========================================
-    function startAudit() {
-      landing.style.display = 'none';
-      audit.classList.add('active');
-      currentQuestion = 0;
-      answers = {};
-      renderQuestion();
-    }
-    
-    function renderQuestion() {
-      const q = QUESTIONS[currentQuestion];
-      const front = DW.FRONTS[q.front];
-      
-      // Update progress
-      const progress = ((currentQuestion + 1) / QUESTIONS.length) * 100;
-      progressFill.style.width = `${progress}%`;
-      progressText.textContent = `${currentQuestion + 1} / ${QUESTIONS.length}`;
-      
-      // Build question HTML
-      const selectedValue = answers[currentQuestion];
-      
-      let optionsHTML = q.options.map((opt, i) => `
-        <div class="question__option ${selectedValue === opt.value ? 'selected' : ''}" data-value="${opt.value}">
-          <div class="question__option-indicator"></div>
-          <span class="question__option-text">${opt.label}</span>
+</section>
+
+<!-- ── Tools ────────────────────────────────────────────────────── -->
+<section class="tools-section" id="tools">
+  <div class="wrapper">
+    <div class="section-label reveal">Lab Tools</div>
+    <div class="tools-grid">
+
+      <a href="/threat-assessment/" class="tool-card reveal reveal-d1">
+        <div class="tool-index">
+          01
+          <span class="tool-status live">Live</span>
         </div>
-      `).join('');
-      
-      questionContainer.innerHTML = `
-        <div class="question__front">
-          <span>${front.icon}</span>
-          <span>${front.name}</span>
+        <div class="tool-name">Threat Assessment</div>
+        <div class="tool-route">/threat-assessment/</div>
+        <div class="tool-desc">8-front diagnostic. Audit your dopamine exposure across social, news, gaming, shopping, caffeine, and more. Get a threat score and battle plan.</div>
+        <div class="tool-arrow">Open tool <span>→</span></div>
+      </a>
+
+      <a href="/drift-audit/" class="tool-card reveal reveal-d2">
+        <div class="tool-index">
+          02
+          <span class="tool-status coming">Coming</span>
         </div>
-        <h2 class="question__text">${q.text}</h2>
-        <div class="question__options">
-          ${optionsHTML}
+        <div class="tool-name">Drift Audit</div>
+        <div class="tool-route">/drift-audit/</div>
+        <div class="tool-desc">5-minute diagnostic. Identify where dopamine is leaking and how far you've drifted from baseline.</div>
+        <div class="tool-arrow">Coming soon <span>→</span></div>
+      </a>
+
+      <a href="/loop-map/" class="tool-card reveal reveal-d3">
+        <div class="tool-index">
+          03
+          <span class="tool-status live">Live</span>
         </div>
-      `;
-      
-      // Add click handlers to options
-      questionContainer.querySelectorAll('.question__option').forEach(opt => {
-        opt.addEventListener('click', () => selectOption(opt));
-      });
-      
-      // Update nav buttons
-      prevBtn.disabled = currentQuestion === 0;
-      nextBtn.textContent = currentQuestion === QUESTIONS.length - 1 ? 'Complete' : 'Next';
-      nextBtn.disabled = selectedValue === undefined;
-    }
-    
-    function selectOption(optionEl) {
-      // Remove previous selection
-      questionContainer.querySelectorAll('.question__option').forEach(o => {
-        o.classList.remove('selected');
-      });
-      
-      // Add new selection
-      optionEl.classList.add('selected');
-      answers[currentQuestion] = parseInt(optionEl.dataset.value);
-      nextBtn.disabled = false;
-    }
-    
-    function prevQuestion() {
-      if (currentQuestion > 0) {
-        currentQuestion--;
-        renderQuestion();
+        <div class="tool-name">Loop Disruption Map</div>
+        <div class="tool-route">/loop-map/</div>
+        <div class="tool-desc">Map a compulsive loop. Identify the easiest intervention point. Get a tailored disruption plan in under 3 minutes.</div>
+        <div class="tool-arrow">Open tool <span>→</span></div>
+      </a>
+
+      <a href="/intercept/" class="tool-card reveal reveal-d4">
+        <div class="tool-index">
+          04
+          <span class="tool-status coming">Coming</span>
+        </div>
+        <div class="tool-name">Impulse Intercept</div>
+        <div class="tool-route">/intercept/</div>
+        <div class="tool-desc">90-second delay protocol. Disrupt the automatic action window before the behavior executes.</div>
+        <div class="tool-arrow">Coming soon <span>→</span></div>
+      </a>
+
+      <a href="/environment/" class="tool-card reveal reveal-d5">
+        <div class="tool-index">
+          05
+          <span class="tool-status coming">Coming</span>
+        </div>
+        <div class="tool-name">Environment Redesign</div>
+        <div class="tool-route">/environment/</div>
+        <div class="tool-desc">Map the physical and digital architecture that enables destructive defaults. Rebuild the terrain.</div>
+        <div class="tool-arrow">Coming soon <span>→</span></div>
+      </a>
+
+      <a href="/control-index/" class="tool-card reveal reveal-d5">
+        <div class="tool-index">
+          06
+          <span class="tool-status coming">Coming</span>
+        </div>
+        <div class="tool-name">Weekly Control Index</div>
+        <div class="tool-route">/control-index/</div>
+        <div class="tool-desc">Track drift without shame. Measure system stability, not moral worth. Data, not judgment.</div>
+        <div class="tool-arrow">Coming soon <span>→</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Ecosystem ─────────────────────────────────────────────────── -->
+<section class="ecosystem-section" id="ecosystem">
+  <div class="wrapper">
+    <div class="section-label reveal">Ecosystem</div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items:start;">
+      <div class="reveal">
+        <div class="ecosystem-flow">
+          <div class="eco-node active">
+            <div class="eco-connector">
+              <div class="eco-dot"></div>
+              <div class="eco-line"></div>
+            </div>
+            <div class="eco-body">
+              <div class="eco-label">Entry</div>
+              <div class="eco-title">DopamineWar.com</div>
+              <div class="eco-note">Tactical tools. Fast relief. No commitment required.</div>
+            </div>
+          </div>
+          <div class="eco-node">
+            <div class="eco-connector">
+              <div class="eco-dot"></div>
+              <div class="eco-line"></div>
+            </div>
+            <div class="eco-body">
+              <div class="eco-label">Clarity</div>
+              <div class="eco-title">ViceBudget.com</div>
+              <div class="eco-note">Quantify behavioral leakage. Turn emotion into data.</div>
+            </div>
+          </div>
+          <div class="eco-node">
+            <div class="eco-connector">
+              <div class="eco-dot"></div>
+              <div class="eco-line"></div>
+            </div>
+            <div class="eco-body">
+              <div class="eco-label">Identity</div>
+              <div class="eco-title">OperatingSober.com</div>
+              <div class="eco-note">Long-form philosophy. Sovereignty through sobriety.</div>
+            </div>
+          </div>
+          <div class="eco-node">
+            <div class="eco-connector">
+              <div class="eco-dot"></div>
+            </div>
+            <div class="eco-body">
+              <div class="eco-label">Meta</div>
+              <div class="eco-title">AntiFramework.com</div>
+              <div class="eco-note">Critique of the systems that produced the problem.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="satellites-grid" style="display:flex; flex-direction:column; gap:12px;" id="ecosystem">
+        <a href="https://vicebudget.com" class="satellite-card reveal reveal-d1">
+          <div class="satellite-domain">vicebudget.com</div>
+          <div class="satellite-name">Vice Budget</div>
+          <div class="satellite-role">Cost Visibility Engine</div>
+          <div class="satellite-desc">Quantify what the loop actually costs. Financial clarity as behavioral friction.</div>
+        </a>
+        <a href="https://operatingsober.com" class="satellite-card reveal reveal-d2">
+          <div class="satellite-domain">operatingsober.com</div>
+          <div class="satellite-name">Operating Sober</div>
+          <div class="satellite-role">Identity Stabilization</div>
+          <div class="satellite-desc">Essays and frameworks for long-term sovereignty. Not a recovery program. A design philosophy.</div>
+        </a>
+        <a href="https://antiframework.com" class="satellite-card reveal reveal-d3">
+          <div class="satellite-domain">antiframework.com</div>
+          <div class="satellite-name">AntiFramework</div>
+          <div class="satellite-role">Meta-Systems Critique</div>
+          <div class="satellite-desc">High-altitude thinking. Contrarian breakdowns of mainstream productivity and recovery culture.</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Philosophy ────────────────────────────────────────────────── -->
+<section class="philosophy-section" id="philosophy">
+  <div class="wrapper">
+    <div class="section-label reveal">Philosophy</div>
+    <div class="philosophy-inner">
+      <div class="philosophy-quote reveal">
+        Not war<br>against <em>self.</em><br>War against<br>engineered<br><em>drift.</em>
+      </div>
+      <div class="reveal reveal-d1">
+        <p class="philosophy-text">Most systems blame you. They frame compulsion as weakness, relapse as failure, drift as character. That frame is wrong — and it's profitable for someone else that you believe it.</p>
+        <p class="philosophy-text">Attention is harvested. Environments are optimized against your baseline. Every feed, every interface, every default setting was designed to keep you in a loop that costs you and pays someone else.</p>
+        <p class="philosophy-text">The counter-move isn't willpower. It's architecture. Design your environment, name the loop, interrupt the trigger, replace the reward. No shame. No surrender. Systems.</p>
+        <a href="/essays/" class="btn-ghost" style="display:inline-block; margin-top:8px;">Read the essays →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="wrapper">
+    <div class="footer-inner">
+      <div class="footer-brand"><em>Dopamine</em>War</div>
+      <ul class="footer-links">
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="/essays/">Essays</a></li>
+        <li><a href="/field-manual/">Field Manual</a></li>
+        <li><a href="https://operatingsober.com">Operating Sober</a></li>
+        <li><a href="https://antiframework.com">AntiFramework</a></li>
+      </ul>
+      <div class="footer-copy">
+        © DopamineWar.com — Strategic Systems Lab. Not a therapy platform. Not a productivity cult. A design practice.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Scroll-triggered reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
       }
-    }
-    
-    function nextQuestion() {
-      if (answers[currentQuestion] === undefined) return;
-      
-      if (currentQuestion < QUESTIONS.length - 1) {
-        currentQuestion++;
-        renderQuestion();
-      } else {
-        completeAudit();
-      }
-    }
-    
-    // ==========================================
-    // Complete Audit
-    // ==========================================
-    function completeAudit() {
-      // With 1 question per front, score = answer directly
-      const finalScores = {};
-      
-      QUESTIONS.forEach((q, i) => {
-        finalScores[q.front] = answers[i] || 0;
-      });
-      
-      // Save to storage
-      DW.audit.saveScores(finalScores);
-      
-      // Show results
-      showResults(finalScores);
-    }
-    
-    function showResults(scores) {
-      audit.classList.remove('active');
-      results.classList.add('active');
-      
-      const overallScore = DW.audit.getOverallScore();
-      const threat = DW.audit.getThreatLevel(overallScore);
-      
-      const scoreDisplay = document.getElementById('scoreDisplay');
-      const threatBadge = document.getElementById('threatBadge');
-      const threatLabel = document.getElementById('threatLabel');
-      const threatMessage = document.getElementById('threatMessage');
-      
-      scoreDisplay.textContent = overallScore;
-      scoreDisplay.className = `results-teaser__score ${threat.color}`;
-      
-      threatBadge.className = `threat-badge threat-badge--${threat.color}`;
-      threatLabel.textContent = `THREAT LEVEL: ${threat.label}`;
-      
-      const messages = {
-        critical: 'Your reward system is severely compromised. Immediate action required.',
-        high: 'Multiple fronts are actively undermining your focus and wellbeing.',
-        moderate: 'You\'re holding ground, but vulnerabilities exist.',
-        low: 'Mostly under control. Stay vigilant on weak points.',
-        secure: 'Your defenses are solid. Maintain current operations.',
-      };
-      
-      threatMessage.textContent = messages[threat.key];
-    }
-    
-    // ==========================================
-    // Init
-    // ==========================================
-    init();
-  </script>
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+})();
+</script>
+
 </body>
 </html>

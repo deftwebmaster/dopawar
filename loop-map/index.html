@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop Disruption Map — Dopamine War</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --surface-2: #18181c;
+    --border: #242428;
+    --border-active: #3a3a42;
+    --text-primary: #e8e8ec;
+    --text-secondary: #7a7a86;
+    --text-muted: #4a4a54;
+    --accent: #c8f542;
+    --accent-dim: rgba(200, 245, 66, 0.12);
+    --accent-border: rgba(200, 245, 66, 0.3);
+    --danger: #f54242;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --radius: 4px;
+    --transition: 160ms ease;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Layout */
+  .wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header */
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+  }
+  .site-header .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .brand span { color: var(--accent); }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 5px 10px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .theme-toggle:hover { border-color: var(--border-active); color: var(--text-primary); }
+
+  /* Page header */
+  .page-header {
+    padding: 56px 0 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .page-title {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    max-width: 480px;
+  }
+  .privacy-note {
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .privacy-note::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* Save toggle */
+  .save-toggle-row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .toggle-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toggle-switch {
+    position: relative;
+    width: 32px; height: 18px;
+    flex-shrink: 0;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 12px; height: 12px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    transition: var(--transition);
+  }
+  input:checked + .toggle-track { background: var(--accent-dim); border-color: var(--accent-border); }
+  input:checked + .toggle-track::after { transform: translateX(14px); background: var(--accent); }
+
+  /* Form */
+  .form-section {
+    padding: 40px 0;
+  }
+  .form-block {
+    margin-bottom: 36px;
+  }
+  .form-block:last-child { margin-bottom: 0; }
+
+  .field-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .field-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 12px 14px;
+    transition: var(--transition);
+    outline: none;
+  }
+  input[type="text"]:focus {
+    border-color: var(--border-active);
+    background: var(--surface-2);
+  }
+  input[type="text"]::placeholder { color: var(--text-muted); }
+
+  /* Checkbox / Radio groups */
+  .option-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 480px) { .option-grid { grid-template-columns: 1fr; } }
+
+  .option-item {
+    position: relative;
+  }
+  .option-item input[type="checkbox"],
+  .option-item input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+  .option-item label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: var(--transition);
+    user-select: none;
+  }
+  .option-item label:hover {
+    border-color: var(--border-active);
+    color: var(--text-primary);
+  }
+  .option-item input:checked + label {
+    border-color: var(--accent-border);
+    background: var(--accent-dim);
+    color: var(--text-primary);
+  }
+  .option-marker {
+    width: 14px; height: 14px;
+    border: 1px solid var(--border-active);
+    border-radius: 2px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+  .option-item input:checked + label .option-marker {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .option-item input:checked + label .option-marker::after {
+    content: '';
+    width: 6px; height: 4px;
+    border-left: 1.5px solid #000;
+    border-bottom: 1.5px solid #000;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+  .radio-marker {
+    width: 14px; height: 14px;
+    border: 1px solid var(--border-active);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: var(--transition);
+    position: relative;
+  }
+  .option-item input[type="radio"]:checked + label .radio-marker {
+    border-color: var(--accent);
+  }
+  .option-item input[type="radio"]:checked + label .radio-marker::after {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Other input inline */
+  .other-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .other-input-row input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  /* Separator */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 40px 0;
+  }
+
+  /* CTA Button */
+  .cta-row {
+    padding: 8px 0 48px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary .arrow { font-size: 16px; }
+
+  .btn-secondary {
+    background: none;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  .btn-secondary:hover { border-color: var(--border-active); color: var(--text-primary); }
+
+  /* Validation */
+  .error-msg {
+    display: none;
+    color: var(--danger);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    margin-top: 8px;
+  }
+  .error-msg.visible { display: block; }
+
+  /* Output */
+  #output-section {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 48px 0;
+    animation: fadeUp 0.4s ease;
+  }
+  #output-section.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .output-header {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .output-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .output-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .output-block-title {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .loop-summary {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+  .loop-summary strong { color: var(--text-primary); font-weight: 500; }
+
+  /* Disruption point selector */
+  .disruption-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .disruption-item {
+    position: relative;
+  }
+  .disruption-item input[type="radio"] {
+    position: absolute;
+    opacity: 0; width: 0; height: 0;
+  }
+  .disruption-item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  .disruption-item label:hover {
+    border-color: var(--border-active);
+    color: var(--text-primary);
+  }
+  .disruption-item input:checked + label {
+    border-color: var(--accent-border);
+    background: var(--accent-dim);
+    color: var(--text-primary);
+  }
+  .disruption-item .d-radio {
+    width: 14px; height: 14px;
+    border: 1px solid var(--border-active);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: var(--transition);
+    position: relative;
+  }
+  .disruption-item input:checked + label .d-radio { border-color: var(--accent); }
+  .disruption-item input:checked + label .d-radio::after {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .disruption-item .d-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 2px;
+    letter-spacing: 0.05em;
+  }
+  .disruption-item input:checked + label .d-name { color: var(--accent); }
+  .disruption-item .d-desc { font-size: 13px; }
+
+  /* Recommended plan */
+  #plan-output { transition: var(--transition); }
+  .plan-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .plan-point-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #000;
+    background: var(--accent);
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+  .suggestion-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .suggestion-list li {
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Action row */
+  .action-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  /* Light theme */
+  body.light {
+    --bg: #f4f4f0;
+    --surface: #ffffff;
+    --surface-2: #f0f0ec;
+    --border: #ddddd8;
+    --border-active: #aaaaaa;
+    --text-primary: #1a1a1e;
+    --text-secondary: #5a5a62;
+    --text-muted: #9a9aa2;
+    --accent: #1a7a00;
+    --accent-dim: rgba(26, 122, 0, 0.08);
+    --accent-border: rgba(26, 122, 0, 0.3);
+  }
+  body.light .plan-point-badge { color: #fff; }
+  body.light .btn-primary { color: #fff; }
+
+  /* Footer */
+  .page-footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0;
+    margin-top: 0;
+  }
+  .page-footer .wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .footer-text a { color: var(--text-muted); text-decoration: none; }
+  .footer-text a:hover { color: var(--text-secondary); }
+
+  /* Notification toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface-2);
+    border: 1px solid var(--border-active);
+    color: var(--text-primary);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 540px) {
+    .page-header { padding: 36px 0 32px; }
+    .action-row { flex-direction: column; }
+    .plan-header-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Site nav -->
+<header class="site-header">
+  <div class="wrapper">
+    <a class="brand" href="/"><span>Dopamine</span>War</a>
+    <button class="theme-toggle" id="themeToggle">[ LIGHT ]</button>
+  </div>
+</header>
+
+<!-- Page header -->
+<div class="page-header">
+  <div class="wrapper">
+    <div class="page-label">Loop Disruption Map</div>
+    <h1 class="page-title">Map the loop.<br>Find the break point.</h1>
+    <p class="page-subtitle">Map a compulsive loop and get a tailored disruption plan in under 3 minutes. No diagnosis. No shame. Just architecture.</p>
+    <div class="privacy-note">No login. Nothing saved unless you choose.</div>
+  </div>
+</div>
+
+<!-- Main -->
+<main>
+  <div class="wrapper">
+
+    <!-- Save toggle -->
+    <div class="save-toggle-row">
+      <label class="toggle-label">
+        <span class="toggle-switch">
+          <input type="checkbox" id="saveToggle">
+          <span class="toggle-track"></span>
+        </span>
+        Save my last loop in this browser
+      </label>
+    </div>
+
+    <!-- Form -->
+    <form class="form-section" id="loopForm" novalidate>
+
+      <!-- A. Loop label -->
+      <div class="form-block">
+        <label class="field-label" for="loopLabel">Loop label</label>
+        <p class="field-hint">What do you call this pattern?</p>
+        <input type="text" id="loopLabel" placeholder="Late-night scrolling, impulse drinking…" autocomplete="off">
+        <div class="error-msg" id="err-label">Please name your loop.</div>
+      </div>
+
+      <!-- B. Triggers -->
+      <div class="form-block">
+        <label class="field-label">Trigger(s)</label>
+        <p class="field-hint">Select up to 2 that apply most.</p>
+        <div class="option-grid" id="triggerGrid">
+          <div class="option-item">
+            <input type="checkbox" id="t-boredom" name="trigger" value="Boredom">
+            <label for="t-boredom"><span class="option-marker"></span>Boredom</label>
+          </div>
+          <div class="option-item">
+            <input type="checkbox" id="t-stress" name="trigger" value="Stress">
+            <label for="t-stress"><span class="option-marker"></span>Stress</label>
+          </div>
+          <div class="option-item">
+            <input type="checkbox" id="t-fatigue" name="trigger" value="Fatigue">
+            <label for="t-fatigue"><span class="option-marker"></span>Fatigue</label>
+          </div>
+          <div class="option-item">
+            <input type="checkbox" id="t-social" name="trigger" value="Social pressure">
+            <label for="t-social"><span class="option-marker"></span>Social pressure</label>
+          </div>
+          <div class="option-item">
+            <input type="checkbox" id="t-availability" name="trigger" value="Availability / proximity">
+            <label for="t-availability"><span class="option-marker"></span>Availability / proximity</label>
+          </div>
+          <div class="option-item">
+            <input type="checkbox" id="t-time" name="trigger" value="Time of day">
+            <label for="t-time"><span class="option-marker"></span>Time of day</label>
+          </div>
+          <div class="option-item">
+            <input type="checkbox" id="t-emotional" name="trigger" value="Emotional spike">
+            <label for="t-emotional"><span class="option-marker"></span>Emotional spike</label>
+          </div>
+          <div class="option-item" style="grid-column: 1 / -1;">
+            <input type="checkbox" id="t-other" name="trigger" value="Other">
+            <label for="t-other" style="flex-wrap: wrap; gap: 8px;">
+              <span class="option-marker"></span>
+              <span>Other:</span>
+              <input type="text" id="otherTriggerText" placeholder="Describe…" style="flex:1; min-width:120px; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; padding:0 4px; font-size:13px; color:var(--text-primary); outline:none;">
+            </label>
+          </div>
+        </div>
+        <div class="error-msg" id="err-trigger">Select at least 1 trigger.</div>
+      </div>
+
+      <!-- C. Action -->
+      <div class="form-block">
+        <label class="field-label" for="loopAction">Action</label>
+        <p class="field-hint">What do you actually do when the loop fires?</p>
+        <input type="text" id="loopAction" placeholder="Open TikTok, pour a drink…" autocomplete="off">
+        <div class="error-msg" id="err-action">Please describe the action.</div>
+      </div>
+
+      <!-- D. Instant reward -->
+      <div class="form-block">
+        <label class="field-label">Instant reward</label>
+        <p class="field-hint">What does the action give you in the moment?</p>
+        <div class="option-grid">
+          <div class="option-item">
+            <input type="radio" id="r-relief" name="reward" value="Relief">
+            <label for="r-relief"><span class="radio-marker"></span>Relief</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="r-stimulation" name="reward" value="Stimulation">
+            <label for="r-stimulation"><span class="radio-marker"></span>Stimulation</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="r-numbness" name="reward" value="Numbness">
+            <label for="r-numbness"><span class="radio-marker"></span>Numbness</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="r-novelty" name="reward" value="Novelty">
+            <label for="r-novelty"><span class="radio-marker"></span>Novelty</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="r-escape" name="reward" value="Escape">
+            <label for="r-escape"><span class="radio-marker"></span>Escape</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="r-validation" name="reward" value="Validation">
+            <label for="r-validation"><span class="radio-marker"></span>Validation</label>
+          </div>
+        </div>
+        <div class="error-msg" id="err-reward">Select a reward type.</div>
+      </div>
+
+      <!-- E. Aftermath -->
+      <div class="form-block">
+        <label class="field-label">Aftermath</label>
+        <p class="field-hint">How do you feel shortly after?</p>
+        <div class="option-grid">
+          <div class="option-item">
+            <input type="radio" id="a-regret" name="aftermath" value="Regret">
+            <label for="a-regret"><span class="radio-marker"></span>Regret</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="a-neutral" name="aftermath" value="Neutral">
+            <label for="a-neutral"><span class="radio-marker"></span>Neutral</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="a-chasing" name="aftermath" value="Still chasing">
+            <label for="a-chasing"><span class="radio-marker"></span>Still chasing</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="a-tired" name="aftermath" value="Tired">
+            <label for="a-tired"><span class="radio-marker"></span>Tired</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="a-shame" name="aftermath" value="Shame">
+            <label for="a-shame"><span class="radio-marker"></span>Shame</label>
+          </div>
+          <div class="option-item">
+            <input type="radio" id="a-cost" name="aftermath" value="Financial/time cost">
+            <label for="a-cost"><span class="radio-marker"></span>Financial / time cost</label>
+          </div>
+        </div>
+        <div class="error-msg" id="err-aftermath">Select an aftermath.</div>
+      </div>
+
+      <hr class="section-divider">
+
+      <!-- CTA -->
+      <div class="cta-row">
+        <button type="submit" class="btn-primary">
+          Generate Disruption Plan <span class="arrow">→</span>
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Output -->
+    <section id="output-section" aria-live="polite">
+
+      <!-- Loop summary -->
+      <div class="output-header">Loop Analysis</div>
+
+      <div class="output-block">
+        <div class="output-block-title">Loop Summary</div>
+        <p class="loop-summary" id="loopSummary"></p>
+      </div>
+
+      <!-- Disruption point selector -->
+      <div class="output-block">
+        <div class="output-block-title">Disruption Point — auto-selected, adjustable</div>
+        <div class="disruption-options" id="disruptionOptions">
+          <div class="disruption-item">
+            <input type="radio" id="dp-trigger" name="disruptPoint" value="Trigger">
+            <label for="dp-trigger">
+              <span class="d-radio"></span>
+              <span>
+                <div class="d-name">Trigger</div>
+                <div class="d-desc">Remove or neutralize the cue before the loop fires.</div>
+              </span>
+            </label>
+          </div>
+          <div class="disruption-item">
+            <input type="radio" id="dp-action" name="disruptPoint" value="Action">
+            <label for="dp-action">
+              <span class="d-radio"></span>
+              <span>
+                <div class="d-name">Action</div>
+                <div class="d-desc">Add friction between the impulse and the behavior.</div>
+              </span>
+            </label>
+          </div>
+          <div class="disruption-item">
+            <input type="radio" id="dp-reward" name="disruptPoint" value="Reward">
+            <label for="dp-reward">
+              <span class="d-radio"></span>
+              <span>
+                <div class="d-name">Reward</div>
+                <div class="d-desc">Delay, replace, or surface the actual cost of the reward.</div>
+              </span>
+            </label>
+          </div>
+          <div class="disruption-item">
+            <input type="radio" id="dp-environment" name="disruptPoint" value="Environment">
+            <label for="dp-environment">
+              <span class="d-radio"></span>
+              <span>
+                <div class="d-name">Environment</div>
+                <div class="d-desc">Re-architect physical and digital space to remove the path of least resistance.</div>
+              </span>
+            </label>
+          </div>
+          <div class="disruption-item">
+            <input type="radio" id="dp-recovery" name="disruptPoint" value="Recovery">
+            <label for="dp-recovery">
+              <span class="d-radio"></span>
+              <span>
+                <div class="d-name">Recovery</div>
+                <div class="d-desc">Interrupt the aftermath loop and build resilience after the fact.</div>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan output -->
+      <div class="output-block" id="plan-output">
+        <div class="plan-header-row">
+          <div class="output-block-title">Recommended Plan</div>
+          <span class="plan-point-badge" id="planBadge"></span>
+        </div>
+        <ul class="suggestion-list" id="suggestionList"></ul>
+      </div>
+
+      <!-- Artifact line -->
+      <p style="font-family:var(--mono);font-size:12px;color:var(--text-secondary);letter-spacing:0.04em;margin-bottom:16px;">
+        This is your current loop architecture. Adjust one constraint today.
+      </p>
+
+      <!-- Actions -->
+      <div class="action-row">
+        <button class="btn-primary" id="copyBtn">Copy Summary + Plan <span class="arrow">↗</span></button>
+        <button class="btn-secondary" id="resetBtn">Reset</button>
+      </div>
+
+    </section>
+
+  </div>
+</main>
+
+<footer class="page-footer">
+  <div class="wrapper">
+    <span class="footer-text">Part of <a href="/">DopamineWar.com</a> — Strategic Systems Lab</span>
+    <span class="footer-text">v0.1 — Loop Disruption Map</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Suggestion library ──────────────────────────────────────────────────────
+  const SUGGESTIONS = {
+    Trigger: [
+      "Name it out loud: 'I'm entering the loop.' Then wait 30 seconds before doing anything.",
+      "Pre-commit: write a 1-line rule for the next 2 hours and put it somewhere visible.",
+      "Set a timer for the danger window (e.g. 20 minutes) before you start anything — use the window intentionally.",
+      "Log the trigger the moment you notice it. Observation creates distance.",
+      "Create a 'trigger card' — a single sentence you read when this fires, reminding you of the cost.",
+    ],
+    Action: [
+      "Add a 90-second delay rule before the action. The urge has to survive 90 seconds to proceed.",
+      "Move the app, device, or item to a different room. Physical distance is system design.",
+      "Require a small entry tax before the action: 10 pushups, 1 full glass of water, or a short walk.",
+      "Log the action with a timestamp. Measurement alone changes behavior.",
+      "Install a pattern interrupt: close the tab, stand up, change rooms — then decide.",
+    ],
+    Reward: [
+      "Swap the reward: find a low-cost stimulation alternative (5-minute walk, cold water, music) and use it first.",
+      "Delay the reward: set a 10-minute timer. If you still want it after, proceed — intentionally.",
+      "Make the reward visible: write what you expect to feel vs what actually happens afterward.",
+      "Identify the gap: what need does this reward meet? Name it specifically and find 1 cleaner way to meet it.",
+      "Track the reward quality. 1–10 scale after each instance. Data reduces illusion.",
+    ],
+    Environment: [
+      "Remove proximity: charger outside the bedroom, device out of reach, bottle not on the counter.",
+      "Block the trigger path: website blockers, log out of apps, delete the shortcut.",
+      "Change the default option: put the better behavior first — book on the nightstand, water on the desk.",
+      "Audit your physical space for loop enablers. Remove one today.",
+      "Design a 'hard stop' environment: a specific location or time where the loop is structurally impossible.",
+    ],
+    Recovery: [
+      "If it happens, run a 2-minute reset: water, 3 slow breaths, write 1 sentence about the trigger.",
+      "No shame loop: treat each instance as system data. Ask what one constraint you'd adjust for tomorrow.",
+      "Set a hard stop time and a wind-down script — sleep protection prevents fatigue from becoming a trigger.",
+      "Post-loop debrief (2 min): what fired? What was the actual need? What's one small change?",
+      "Separate the behavior from your identity. The loop is a design flaw in the environment, not a character flaw.",
+    ],
+  };
+
+  // ── Heuristic logic ─────────────────────────────────────────────────────────
+  function selectDisruptionPoint(triggers, reward) {
+    const tSet = new Set(triggers);
+    if (tSet.has('Availability / proximity') || tSet.has('Time of day')) return 'Environment';
+    if (reward === 'Stimulation' || reward === 'Novelty') return 'Reward';
+    if (tSet.has('Stress') || tSet.has('Emotional spike')) return 'Recovery';
+    return 'Action';
+  }
+
+  // Pick 3 suggestions from the chosen point
+  function getSuggestions(point) {
+    const pool = SUGGESTIONS[point];
+    // Always return first 3 for determinism; could shuffle later
+    return pool.slice(0, 3);
+  }
+
+  // ── DOM refs ─────────────────────────────────────────────────────────────────
+  const form = document.getElementById('loopForm');
+  const outputSection = document.getElementById('output-section');
+  const loopSummaryEl = document.getElementById('loopSummary');
+  const planBadge = document.getElementById('planBadge');
+  const suggestionList = document.getElementById('suggestionList');
+  const copyBtn = document.getElementById('copyBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const themeToggle = document.getElementById('themeToggle');
+  const saveToggle = document.getElementById('saveToggle');
+  const toast = document.getElementById('toast');
+
+  // Track current plan for copy
+  let currentPlan = null;
+
+  // ── Theme ────────────────────────────────────────────────────────────────────
+  const savedTheme = localStorage.getItem('dw-theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.body.classList.add('light');
+    themeToggle.textContent = '[ DARK ]';
+  }
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    const isLight = document.body.classList.contains('light');
+    themeToggle.textContent = isLight ? '[ DARK ]' : '[ LIGHT ]';
+    localStorage.setItem('dw-theme', isLight ? 'light' : 'dark');
+  });
+
+  // ── Save toggle ──────────────────────────────────────────────────────────────
+  const saveEnabled = localStorage.getItem('dw-save') === '1';
+  saveToggle.checked = saveEnabled;
+
+  saveToggle.addEventListener('change', () => {
+    localStorage.setItem('dw-save', saveToggle.checked ? '1' : '0');
+    if (!saveToggle.checked) localStorage.removeItem('dw-last-loop');
+  });
+
+  // Load saved loop
+  function loadSavedLoop() {
+    if (!saveToggle.checked) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem('dw-last-loop') || 'null');
+      if (!saved) return;
+      if (saved.label) document.getElementById('loopLabel').value = saved.label;
+      if (saved.triggers) {
+        saved.triggers.forEach(v => {
+          const cb = document.querySelector(`input[name="trigger"][value="${v}"]`);
+          if (cb) { cb.checked = true; limitTriggers(); }
+          if (v === 'Other' && saved.otherText) {
+            document.getElementById('t-other').checked = true;
+            document.getElementById('otherTriggerText').value = saved.otherText;
+          }
+        });
+      }
+      if (saved.action) document.getElementById('loopAction').value = saved.action;
+      if (saved.reward) {
+        const r = document.querySelector(`input[name="reward"][value="${saved.reward}"]`);
+        if (r) r.checked = true;
+      }
+      if (saved.aftermath) {
+        const a = document.querySelector(`input[name="aftermath"][value="${saved.aftermath}"]`);
+        if (a) a.checked = true;
+      }
+    } catch (e) { /* ignore */ }
+  }
+  loadSavedLoop();
+
+  // ── Trigger limiter (max 2) ──────────────────────────────────────────────────
+  function limitTriggers() {
+    const all = document.querySelectorAll('input[name="trigger"]');
+    const checked = document.querySelectorAll('input[name="trigger"]:checked');
+    if (checked.length >= 2) {
+      all.forEach(cb => { if (!cb.checked) cb.disabled = true; });
+    } else {
+      all.forEach(cb => { cb.disabled = false; });
+    }
+  }
+  document.querySelectorAll('input[name="trigger"]').forEach(cb => {
+    cb.addEventListener('change', limitTriggers);
+  });
+
+  // ── Disruption point change → update plan live ───────────────────────────────
+  document.querySelectorAll('input[name="disruptPoint"]').forEach(r => {
+    r.addEventListener('change', () => {
+      if (!currentPlan) return;
+      updatePlan(r.value);
+    });
+  });
+
+  function updatePlan(point) {
+    planBadge.textContent = `Best point: ${point}`;
+    const suggestions = getSuggestions(point);
+    suggestionList.innerHTML = suggestions.map(s => `<li>${s}</li>`).join('');
+    if (currentPlan) currentPlan.selectedPoint = point;
+  }
+
+  // ── Validation ───────────────────────────────────────────────────────────────
+  function validate() {
+    let ok = true;
+    const label = document.getElementById('loopLabel').value.trim();
+    const action = document.getElementById('loopAction').value.trim();
+    const triggers = [...document.querySelectorAll('input[name="trigger"]:checked')].map(c => c.value);
+    const reward = document.querySelector('input[name="reward"]:checked')?.value;
+    const aftermath = document.querySelector('input[name="aftermath"]:checked')?.value;
+
+    setErr('err-label', !label);
+    setErr('err-trigger', triggers.length === 0);
+    setErr('err-action', !action);
+    setErr('err-reward', !reward);
+    setErr('err-aftermath', !aftermath);
+
+    return label && triggers.length > 0 && action && reward && aftermath;
+  }
+
+  function setErr(id, show) {
+    document.getElementById(id).classList.toggle('visible', show);
+  }
+
+  // ── Form submit ──────────────────────────────────────────────────────────────
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const label = document.getElementById('loopLabel').value.trim();
+    const action = document.getElementById('loopAction').value.trim();
+    const otherText = document.getElementById('otherTriggerText').value.trim();
+    let triggers = [...document.querySelectorAll('input[name="trigger"]:checked')].map(c => {
+      if (c.value === 'Other' && otherText) return otherText;
+      return c.value;
+    });
+    const rawTriggerValues = [...document.querySelectorAll('input[name="trigger"]:checked')].map(c => c.value);
+    const reward = document.querySelector('input[name="reward"]:checked').value;
+    const aftermath = document.querySelector('input[name="aftermath"]:checked').value;
+
+    // Auto-select disruption point
+    const autoPoint = selectDisruptionPoint(rawTriggerValues, reward);
+
+    // Set radio
+    const dpRadio = document.querySelector(`input[name="disruptPoint"][value="${autoPoint}"]`);
+    if (dpRadio) dpRadio.checked = true;
+
+    // Build summary
+    const triggerText = triggers.length === 1 ? triggers[0] : `${triggers[0]} or ${triggers[1]}`;
+    const summaryHTML = `When <strong>${triggerText}</strong> hits, I tend to <strong>${action}</strong> because it gives me <strong>${reward.toLowerCase()}</strong>. Afterward I feel <strong>${aftermath.toLowerCase()}</strong>, which makes the loop easier to repeat.`;
+    loopSummaryEl.innerHTML = summaryHTML;
+
+    // Store plan
+    currentPlan = { label, triggers: rawTriggerValues, otherText, action, reward, aftermath, selectedPoint: autoPoint };
+
+    // Update plan display
+    updatePlan(autoPoint);
+
+    // Record anonymous usage
+    recordUsage(autoPoint, reward);
+
+    // Save if enabled
+    if (saveToggle.checked) {
+      localStorage.setItem('dw-last-loop', JSON.stringify(currentPlan));
+    }
+
+    // Show output
+    outputSection.classList.add('visible');
+    setTimeout(() => {
+      outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  });
+
+  // ── Copy ─────────────────────────────────────────────────────────────────────
+  copyBtn.addEventListener('click', () => {
+    if (!currentPlan) return;
+    const point = currentPlan.selectedPoint;
+    const suggestions = getSuggestions(point);
+    const summaryText = loopSummaryEl.textContent;
+    const text = [
+      `LOOP DISRUPTION MAP — DopamineWar.com`,
+      `Loop: ${currentPlan.label}`,
+      ``,
+      `SUMMARY`,
+      summaryText,
+      ``,
+      `DISRUPTION POINT: ${point}`,
+      ``,
+      `PLAN`,
+      ...suggestions.map((s, i) => `${i + 1}. ${s}`),
+    ].join('\n');
+
+    navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard.')).catch(() => showToast('Copy failed — try selecting manually.'));
+  });
+
+  // ── Reset ────────────────────────────────────────────────────────────────────
+  resetBtn.addEventListener('click', () => {
+    form.reset();
+    document.querySelectorAll('input[name="trigger"]').forEach(cb => { cb.disabled = false; });
+    document.getElementById('otherTriggerText').value = '';
+    outputSection.classList.remove('visible');
+    currentPlan = null;
+    ['err-label','err-trigger','err-action','err-reward','err-aftermath'].forEach(id => {
+      document.getElementById(id).classList.remove('visible');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── Anonymous aggregate counters (local only, no network) ────────────────────
+  function recordUsage(point, reward) {
+    try {
+      const raw = JSON.parse(localStorage.getItem('dw-stats') || '{}');
+      raw.points = raw.points || {};
+      raw.rewards = raw.rewards || {};
+      raw.points[point] = (raw.points[point] || 0) + 1;
+      raw.rewards[reward] = (raw.rewards[reward] || 0) + 1;
+      raw.total = (raw.total || 0) + 1;
+      localStorage.setItem('dw-stats', JSON.stringify(raw));
+    } catch (e) { /* never block on this */ }
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+})();
+</script>
+</body>
+</html>
