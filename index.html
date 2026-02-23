@@ -583,6 +583,186 @@
   .reveal-d3 { transition-delay: 0.15s; }
   .reveal-d4 { transition-delay: 0.2s; }
   .reveal-d5 { transition-delay: 0.25s; }
+
+  /* ── Nav problem subtitles ────────────────────────────────────── */
+  .nav-links a .nav-sub {
+    display: block;
+    font-size: 9px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-top: 1px;
+    font-style: normal;
+  }
+  .nav-links li { list-style: none; }
+  .nav-links a:not(.nav-cta) {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  /* ── Positioning line ─────────────────────────────────────────── */
+  .positioning-line {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    background: var(--surface);
+  }
+  .positioning-line em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* ── Value prop section ───────────────────────────────────────── */
+  .value-prop {
+    padding: 72px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .value-prop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  @media (max-width: 700px) { .value-prop-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+  .vp-col-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-mid);
+  }
+  .vp-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.55;
+  }
+  .vp-item::before {
+    content: '—';
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+  .vp-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.55;
+    align-items: flex-start;
+  }
+  .vp-step-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    border-radius: 2px;
+    padding: 2px 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Tool tier headers ────────────────────────────────────────── */
+  .tool-tier {
+    margin-bottom: 0;
+  }
+  .tool-tier-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 10px 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
+    margin-top: 2px;
+  }
+  .tool-tier-label span {
+    color: var(--accent);
+    margin-right: 8px;
+  }
+
+  /* ── Pattern proof ────────────────────────────────────────────── */
+  .pattern-proof {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .pattern-proof-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  @media (max-width: 700px) { .pattern-proof-inner { grid-template-columns: 1fr; } }
+  .proof-stat {
+    background: var(--surface-2);
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .proof-stat__value {
+    font-family: var(--display);
+    font-size: 44px;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .proof-stat__label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .proof-stat__note {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Footer improvements ──────────────────────────────────────── */
+  .footer-tool-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-bottom: 16px;
+  }
+  .footer-tool-links a {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+    transition: color var(--tr);
+  }
+  .footer-tool-links a:hover { color: var(--text-secondary); }
+  .footer-mission {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 300;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
 </style>
 </head>
 <body>
@@ -592,10 +772,11 @@
   <div class="wrapper nav-inner">
     <a class="nav-brand" href="/"><em>Dopamine</em>War</a>
     <ul class="nav-links">
-      <li><a href="#tools">Tools</a></li>
-      <li><a href="#ecosystem">Ecosystem</a></li>
-      <li><a href="#philosophy">Philosophy</a></li>
-      <li><a href="/loop-map/" class="nav-cta">Start Here →</a></li>
+      <li><a href="#tools">Tools<span class="nav-sub">See the lab</span></a></li>
+      <li><a href="/threat-assessment/">Assess<span class="nav-sub">Find weak spots</span></a></li>
+      <li><a href="/loop-map/">Loop Map<span class="nav-sub">Map your pattern</span></a></li>
+      <li><a href="#philosophy">Philosophy<span class="nav-sub">The framework</span></a></li>
+      <li><a href="/threat-assessment/" class="nav-cta">Start Threat Assessment →</a></li>
     </ul>
   </div>
 </nav>
@@ -605,12 +786,12 @@
   <div class="wrapper">
     <div class="hero-eyebrow">Strategic Systems Lab</div>
     <h1 class="hero-title">
-      Dopamine<br>
-      <span class="line-accent">War.</span>
+      Stop Being<br>
+      <span class="line-accent">Hijacked.</span>
     </h1>
     <div class="hero-body">
       <p class="hero-manifesto">
-        You are <strong>not broken</strong>. The environment is engineered. Every loop you're stuck in was designed — by someone else, for someone else's profit. <strong>Design counter-systems.</strong>
+        Tools that reveal how your brain is being manipulated — and give you <strong>systematic ways to regain control.</strong> You are not broken. The environment is engineered. <strong>Design counter-systems.</strong>
       </p>
       <div class="hero-tenets">
         <div class="tenet">Not war against self. War against engineered drift.</div>
@@ -618,9 +799,46 @@
         <div class="tenet">Systems over willpower. Always.</div>
       </div>
       <div class="hero-cta-row">
-        <a href="/loop-map/" class="btn-primary">Map Your Loop →</a>
-        <a href="#tools" class="btn-ghost">See all tools</a>
+        <a href="/threat-assessment/" class="btn-primary">Start Threat Assessment →</a>
+        <a href="#tools" class="btn-ghost">Explore tools</a>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Positioning line ──────────────────────────────────────────── -->
+<div class="positioning-line">
+  This is not therapy. This is not motivation. This is <em>counter-intelligence for your nervous system.</em>
+</div>
+
+<!-- ── Value Prop ────────────────────────────────────────────────── -->
+<section class="value-prop reveal">
+  <div class="wrapper">
+    <div class="value-prop-grid">
+
+      <div>
+        <div class="vp-col-label">What This Is</div>
+        <div class="vp-item">A diagnostic suite to reveal your highest-risk behavior fronts</div>
+        <div class="vp-item">A lab for designing systems that remove unwanted habits at the architecture level</div>
+        <div class="vp-item">A framework for restoring control — without willpower, shame, or surrender</div>
+      </div>
+
+      <div>
+        <div class="vp-col-label">Who It Helps</div>
+        <div class="vp-item">Anyone stuck in loops they can identify but can't break</div>
+        <div class="vp-item">High-performers losing ground to distraction and impulse</div>
+        <div class="vp-item">People who've tried motivation-based approaches and found them hollow</div>
+        <div class="vp-item">Anyone who is not broken — just hijacked</div>
+      </div>
+
+      <div>
+        <div class="vp-col-label">How It Works</div>
+        <div class="vp-step"><span class="vp-step-num">01</span>Diagnose your biggest weak spots with a Threat Assessment</div>
+        <div class="vp-step"><span class="vp-step-num">02</span>Map the loop architecture driving the behavior</div>
+        <div class="vp-step"><span class="vp-step-num">03</span>Apply targeted system interventions — not willpower patches</div>
+        <div class="vp-step"><span class="vp-step-num">04</span>Track control over time. Measure stability, not moral worth</div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -631,6 +849,7 @@
     <div class="section-label reveal">Lab Tools</div>
     <div class="tools-grid">
 
+      <div class="tool-tier-label"><span>🔍</span>DIAGNOSE — Where are you most hijacked?</div>
       <a href="/threat-assessment/" class="tool-card reveal reveal-d1">
         <div class="tool-index">
           01
@@ -653,6 +872,7 @@
         <div class="tool-arrow">Coming soon <span>→</span></div>
       </a>
 
+      <div class="tool-tier-label"><span>🧠</span>MAP — See your patterns as a system</div>
       <a href="/loop-map/" class="tool-card reveal reveal-d3">
         <div class="tool-index">
           03
@@ -664,6 +884,7 @@
         <div class="tool-arrow">Open tool <span>→</span></div>
       </a>
 
+      <div class="tool-tier-label"><span>🛠</span>DISRUPT — Interrupt the automatic action window</div>
       <a href="/intercept/" class="tool-card reveal reveal-d4">
         <div class="tool-index">
           04
@@ -686,6 +907,7 @@
         <div class="tool-arrow">Coming soon <span>→</span></div>
       </a>
 
+      <div class="tool-tier-label"><span>📈</span>TRACK — Measure system improvements over time</div>
       <a href="/control-index/" class="tool-card reveal reveal-d5">
         <div class="tool-index">
           06
@@ -697,6 +919,29 @@
         <div class="tool-arrow">Coming soon <span>→</span></div>
       </a>
 
+    </div>
+  </div>
+</section>
+
+<!-- ── Pattern Proof ─────────────────────────────────────────────── -->
+<section class="pattern-proof">
+  <div class="wrapper">
+    <div class="pattern-proof-inner">
+      <div class="proof-stat">
+        <div class="proof-stat__value">8</div>
+        <div class="proof-stat__label">Behavior fronts tracked per assessment</div>
+        <div class="proof-stat__note">Early access data</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-stat__value">&lt;5<span style="font-size:28px">min</span></div>
+        <div class="proof-stat__label">To complete a full threat assessment</div>
+        <div class="proof-stat__note">No account required</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-stat__value">0</div>
+        <div class="proof-stat__label">Data sent to any server</div>
+        <div class="proof-stat__note">100% client-side, always</div>
+      </div>
     </div>
   </div>
 </section>
@@ -801,10 +1046,19 @@
   <div class="wrapper">
     <div class="footer-inner">
       <div class="footer-brand"><em>Dopamine</em>War</div>
+      <div class="footer-mission">Design systems that make impulses irrelevant.</div>
+      <div class="footer-tool-links">
+        <a href="/threat-assessment/">Threat Assessment</a>
+        <a href="/loop-map/">Loop Map</a>
+        <a href="/drift-audit/">Drift Audit</a>
+        <a href="/intercept/">Impulse Intercept</a>
+        <a href="/environment/">Environment Redesign</a>
+        <a href="/control-index/">Weekly Control Index</a>
+        <a href="/essays/">Essays</a>
+        <a href="/field-manual/">Field Manual</a>
+      </div>
       <ul class="footer-links">
-        <li><a href="#tools">Tools</a></li>
-        <li><a href="/essays/">Essays</a></li>
-        <li><a href="/field-manual/">Field Manual</a></li>
+        <li><a href="https://vicebudget.com">ViceBudget</a></li>
         <li><a href="https://operatingsober.com">Operating Sober</a></li>
         <li><a href="https://antiframework.com">AntiFramework</a></li>
       </ul>
